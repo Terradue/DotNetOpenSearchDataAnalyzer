@@ -4,7 +4,7 @@ using OSGeo.OSR;
 using OSGeo.GDAL;
 using System.Collections.Generic;
 
-namespace Terradue.Gdal {
+namespace Terradue.OpenSearch.DataAnalyzer {
     public class LocalDataFunctions {
 
         /// <summary>
