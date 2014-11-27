@@ -10,7 +10,7 @@ using Terradue.ServiceModel.Ogc.OwsContext;
 using OSGeo.OGR;
 using System.Collections.Generic;
 
-namespace Terradue.Gdal {
+namespace Terradue.OpenSearch.DataAnalyzer {
     public class LocalData : IAtomizable {
 
         public string inputFile { get; set; }
