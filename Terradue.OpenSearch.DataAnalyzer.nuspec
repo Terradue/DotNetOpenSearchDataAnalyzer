@@ -1,0 +1,22 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Terradue.OpenSearch.DataAnalyzer</id>
+    <version>1.0.0</version>
+    <title>Terradue.OpenSearch.DataAnalyzer</title>
+    <authors>Terradue</authors>
+    <!--<licenseUrl>https://github.com/Terradue/DotNetOpenSearch/blob/master/LICENSE</licenseUrl>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Terradue.OpenSearch.DataAnalyzer is a library targeting .NET 4.0 and above providing Opensearch result of analyzed data</description>
+    <summary>Terradue OpenSearch DataAnalyzer library for .Net</summary>
+    <dependencies>
+      <dependency id="Terradue.OpenSearch" version="[1.7.0.1,1.8)" />
+      <dependency id="Terradue.Util" version="[1.4.0,1.5)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Terradue.OpenSearch.DataAnalyzer/bin/Terradue.OpenSearch.DataAnalyzer.dll" target="lib/net40/Terradue.OpenSearch.DataAnalyzer.dll" />
+  </files>
+
+</package>
+
