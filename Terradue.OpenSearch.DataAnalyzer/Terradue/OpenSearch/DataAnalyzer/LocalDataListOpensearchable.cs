@@ -13,7 +13,7 @@ using Terradue.Util;
 using Terradue.ServiceModel.Syndication;
 using Terradue.OpenSearch.Request;
 
-namespace Terradue.Gdal {
+namespace Terradue.OpenSearch.DataAnalyzer {
     public class LocalDataListOpensearchable : IOpenSearchable {
 
         private static OpenSearchEngine ose;
