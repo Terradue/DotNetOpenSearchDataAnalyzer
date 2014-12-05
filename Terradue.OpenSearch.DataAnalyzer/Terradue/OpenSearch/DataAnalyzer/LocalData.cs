@@ -67,17 +67,12 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 string q = parameters["q"];
                 if (!(name.Contains(q))) return null;
             }
-
-            AtomItem atomEntry = null;
-            try{
-                atomEntry = new AtomItem(name, description, null, identifier, DateTime.UtcNow);
-            }catch(Exception e){
-                atomEntry = new AtomItem();
-            }
+                
             OwsContextAtomEntry entry = new OwsContextAtomEntry();
             entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
             entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
             entry.LastUpdatedTime = DateTimeOffset.Now;
+            entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(new Uri(remoteUrl), "application/octet-stream", size));
 
             if (dataset != null) {
