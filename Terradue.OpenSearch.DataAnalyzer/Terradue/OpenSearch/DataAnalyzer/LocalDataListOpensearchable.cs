@@ -18,8 +18,15 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
         private static OpenSearchEngine ose;
 
+        /// <summary>
+        /// List of local data
+        /// </summary>
         List<LocalData> locals;
 
+        /// <summary>
+        /// Gets the opensearch engine.
+        /// </summary>
+        /// <value>The open search engine.</value>
         public static OpenSearchEngine OpenSearchEngine {
 
             get {
@@ -32,8 +39,22 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             }
         }
 
-        public LocalDataListOpensearchable(List<LocalData> locals) {
+        /// <summary>
+        /// Gets or sets the name of the workflow.
+        /// </summary>
+        /// <value>The name of the workflow.</value>
+        public string WorkflowName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the run identifier.
+        /// </summary>
+        /// <value>The run identifier.</value>
+        public string RunId { get; set; }
+
+        public LocalDataListOpensearchable(List<LocalData> locals, string workflowname, string runid) {
             this.locals = locals;
+            this.WorkflowName = workflowname;
+            this.RunId = runid;
         }
 
 
@@ -61,7 +82,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         public Terradue.OpenSearch.Schema.OpenSearchDescription GetOpenSearchDescription() {
             OpenSearchDescription osd = new OpenSearchDescription();
 
-            osd.ShortName = " Elastic Catalogue";
+            osd.ShortName = " WPS Local data Catalogue";
             osd.Attribution = "Terradue";
             osd.Contact = "info@terradue.com";
             osd.Developer = "Terradue GeoSpatial Development Team";
@@ -78,7 +99,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             NameValueCollection parameters = GetOpenSearchParameters(this.DefaultMimeType);
 
-            UriBuilder searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/localdata/search"));
+            UriBuilder searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + this.WorkflowName + "/" + this.RunId + "/results/search"));
             NameValueCollection queryString = HttpUtility.ParseQueryString("?format=format");
             parameters.AllKeys.FirstOrDefault(k => {
                 queryString.Add(parameters[k], "{" + k + "?}");
@@ -94,7 +115,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                                       "results"));
 
             }
-            searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/localdata/description"));
+            searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + this.WorkflowName + "/" + this.RunId + "/results/description"));
             urls.Add(new OpenSearchDescriptionUrl("application/opensearchdescription+xml", 
                                                   searchUrl.ToString(),
                                                   "self"));
@@ -169,26 +190,11 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             feed.Items = items;
 
-            //Atomizable.SerializeToStream ( res, stream.OutputStream );
             var sw = System.Xml.XmlWriter.Create(stream);
             Atom10FeedFormatter atomFormatter = new Atom10FeedFormatter(feed.Feed);
             atomFormatter.WriteTo(sw);
             sw.Flush();
             sw.Close();
-
-//            using (var stw = new System.IO.StringWriter()) {
-//                using (var sw = System.Xml.XmlWriter.Create(stw)) {
-//                    //Atomizable.SerializeToStream ( res, stream.OutputStream );
-//                    //            var sw = System.Xml.XmlWriter.Create(stream);
-//                    Atom10FeedFormatter atomFormatter = new Atom10FeedFormatter(feed.Feed);
-//                    atomFormatter.WriteTo(sw);
-//                    sw.Flush();
-//                    sw.Close();
-//
-//                    Console.WriteLine("############  we did it so far");
-//                    Console.WriteLine(stw.ToString());
-//                }
-//            }
         }
 
         #endregion
