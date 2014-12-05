@@ -9,9 +9,14 @@ using Terradue.OpenSearch.Result;
 using Terradue.ServiceModel.Ogc.OwsContext;
 using OSGeo.OGR;
 using System.Collections.Generic;
+using log4net;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
+    [assembly: log4net.Config.XmlConfigurator(Watch = true)]
     public class LocalData : IAtomizable {
+
+        private static readonly ILog log = LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public string inputFile { get; set; }
 
@@ -31,20 +36,27 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         //------------------------------------------------------------------------------------------------------------------------
 
         public LocalData(string input, string remoteUrl) {
+            log.Info("Creating new LocalData: Input=" + input);
             this.remoteUrl = remoteUrl;
             inputFile = input;
             try{
                 dataset = OSGeo.GDAL.Gdal.Open( input, Access.GA_ReadOnly );
             }catch(Exception e){
+                log.Error(e.Message + " -- " + e.StackTrace);
+                Console.WriteLine(e.Message + " -- " + e.StackTrace);
                 dataset = null;
             }
             System.IO.FileInfo f = new System.IO.FileInfo(input);
             size = f.Length;
+            log.Info("File size = " + size);
+            Console.WriteLine("File size = " + size);
         }
 
         #region IAtomizable implementation
 
         public AtomItem ToAtomItem(NameValueCollection parameters) {
+
+            Console.WriteLine("ToAtomItem : " + this.inputFilename);
 
             string identifier = this.inputFilename;
 
@@ -55,24 +67,20 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 string q = parameters["q"];
                 if (!(name.Contains(q))) return null;
             }
-
-            AtomItem atomEntry = null;
-            try{
-                atomEntry = new AtomItem(name, description, null, identifier, DateTime.UtcNow);
-            }catch(Exception e){
-                atomEntry = new AtomItem();
-            }
+                
             OwsContextAtomEntry entry = new OwsContextAtomEntry();
             entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
             entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
             entry.LastUpdatedTime = DateTimeOffset.Now;
+            entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(new Uri(remoteUrl), "application/octet-stream", size));
 
-            if(dataset != null){
+            if (dataset != null) {
                 whereType georss = new whereType();
                 PolygonType polygon = new PolygonType();
                 Geometry geometry = LocalDataFunctions.OSRTransform(dataset);
                 string geometryGML = geometry.ExportToGML();
+                Console.WriteLine("Adding geometry : " + geometryGML);
                 polygon.exterior = new AbstractRingPropertyType();
                 //        System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(LinearRingType), "http://www.opengis.net/gml");
                 //
@@ -97,6 +105,9 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                     case "GTiff":
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/geotiff";
                         break;
+                    case "PNG":
+                        offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/wms";
+                        break;
                     default:
                         offering.Code = null;
                         break;
@@ -110,7 +121,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 offering.Contents = contents.ToArray();
                 offerings.Add(offering);
                 entry.Offerings = offerings;
-            }
+            } 
 
             return new AtomItem(entry);
         }
