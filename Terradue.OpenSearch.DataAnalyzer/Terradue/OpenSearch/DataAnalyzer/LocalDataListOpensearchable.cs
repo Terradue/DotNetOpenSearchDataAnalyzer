@@ -78,7 +78,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             NameValueCollection parameters = GetOpenSearchParameters(this.DefaultMimeType);
 
-            UriBuilder searchUrl = new UriBuilder(string.Format("local://gdal/localdata/search"));
+            UriBuilder searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/localdata/search"));
             NameValueCollection queryString = HttpUtility.ParseQueryString("?format=format");
             parameters.AllKeys.FirstOrDefault(k => {
                 queryString.Add(parameters[k], "{" + k + "?}");
@@ -94,7 +94,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                                       "results"));
 
             }
-            searchUrl = new UriBuilder(string.Format("local://gdal/localdata/description"));
+            searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/localdata/description"));
             urls.Add(new OpenSearchDescriptionUrl("application/opensearchdescription+xml", 
                                                   searchUrl.ToString(),
                                                   "self"));
@@ -113,7 +113,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
         public string Identifier {
             get {
-                return "localData";
+                return "localdata";
             }
         }
 
@@ -175,6 +175,20 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             atomFormatter.WriteTo(sw);
             sw.Flush();
             sw.Close();
+
+//            using (var stw = new System.IO.StringWriter()) {
+//                using (var sw = System.Xml.XmlWriter.Create(stw)) {
+//                    //Atomizable.SerializeToStream ( res, stream.OutputStream );
+//                    //            var sw = System.Xml.XmlWriter.Create(stream);
+//                    Atom10FeedFormatter atomFormatter = new Atom10FeedFormatter(feed.Feed);
+//                    atomFormatter.WriteTo(sw);
+//                    sw.Flush();
+//                    sw.Close();
+//
+//                    Console.WriteLine("############  we did it so far");
+//                    Console.WriteLine(stw.ToString());
+//                }
+//            }
         }
 
         #endregion

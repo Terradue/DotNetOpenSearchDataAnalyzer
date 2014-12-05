@@ -14,22 +14,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         /// <param name="ds">Ds.</param>
         public static Geometry OSRTransform(Dataset ds){
 
-            /* -------------------------------------------------------------------- */
-            /*      Initialize srs                                                  */
-            /* -------------------------------------------------------------------- */
-            SpatialReference src = new SpatialReference(ds.GetProjectionRef());
-            SpatialReference dst = new SpatialReference("");
-            dst.ImportFromProj4("+proj=latlong +datum=WGS84 +no_defs");
-
-            /* -------------------------------------------------------------------- */
-            /*      making the transform                                            */
-            /* -------------------------------------------------------------------- */
-            CoordinateTransformation ct = new CoordinateTransformation(src, dst);
-
             double[] adfGeoTransform = new double[6];
-            double  dfGeoX, dfGeoY;
-            ds.GetGeoTransform(adfGeoTransform);
-            ds.GetProjection();
+            double dfGeoX, dfGeoY;
 
             List<double[]> dsPoints = new List<double[]>();
             //Upper left
@@ -44,16 +30,35 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             string val = "";
             Geometry geometry = new Geometry(wkbGeometryType.wkbLinearRing);
 
+            SpatialReference src = new SpatialReference(ds.GetProjectionRef());
+            SpatialReference dst = new SpatialReference("");
+            dst.ImportFromProj4("+proj=latlong +datum=WGS84 +no_defs");
+
+            ds.GetGeoTransform(adfGeoTransform);
+            ds.GetProjection();
+
+            CoordinateTransformation ct;
+            try{
+                ct = new CoordinateTransformation(src, dst);
+            }catch(Exception e){
+                ct = null;
+            }
             foreach (double[] p in dsPoints) {
                 double x = p[0], y = p[1], z = p[2];
                 dfGeoX = adfGeoTransform[0] + adfGeoTransform[1] * x + adfGeoTransform[2] * y;
                 dfGeoY = adfGeoTransform[3] + adfGeoTransform[4] * x + adfGeoTransform[5] * y;
-                ct.TransformPoint(p, dfGeoX, dfGeoY, z);
-                geometry.AddPoint(p[0], p[1], p[2]);
+                if (ct != null) {
+                    ct.TransformPoint(p, dfGeoX, dfGeoY, z);
+                    geometry.AddPoint(p[0], p[1], p[2]);
+                } else {
+                    geometry.AddPoint(dfGeoX, dfGeoY, p[2]);
+                }
             }
+
             geometry.CloseRings();
             return geometry;
         }
+
     }
 }
 

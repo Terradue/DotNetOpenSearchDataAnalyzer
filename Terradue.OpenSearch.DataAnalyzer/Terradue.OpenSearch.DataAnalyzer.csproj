@@ -7,6 +7,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Terradue.OpenSearch.DataAnalyzer</RootNamespace>
     <AssemblyName>Terradue.OpenSearch.DataAnalyzer</AssemblyName>
+    <ReleaseVersion>1.2</ReleaseVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,9 +34,6 @@
     <Reference Include="Terradue.ServiceModel.Syndication">
       <HintPath>..\packages\Terradue.ServiceModel.Syndication.1.0.0.0\lib\net40\Terradue.ServiceModel.Syndication.dll</HintPath>
     </Reference>
-    <Reference Include="Terradue.OpenSearch">
-      <HintPath>..\packages\Terradue.OpenSearch.1.7.10\lib\net40\Terradue.OpenSearch.dll</HintPath>
-    </Reference>
     <Reference Include="gdalconst_csharp">
       <HintPath>..\packages\GDAL.1.9.2\lib\net40\gdalconst_csharp.dll</HintPath>
     </Reference>
@@ -46,14 +46,20 @@
     <Reference Include="osr_csharp">
       <HintPath>..\packages\GDAL.1.9.2\lib\net40\osr_csharp.dll</HintPath>
     </Reference>
-    <Reference Include="Terradue.ServiceModel.Ogc.OwsContext">
-      <HintPath>..\packages\Terradue.ServiceModel.Ogc.OwsContext.1.0.3\lib\net40\Terradue.ServiceModel.Ogc.OwsContext.dll</HintPath>
-    </Reference>
     <Reference Include="Terradue.Util">
       <HintPath>..\packages\Terradue.Util.1.4.0\lib\net40\Terradue.Util.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Terradue.OpenSearch">
+      <HintPath>..\packages\Terradue.OpenSearch.1.7.10\lib\net40\Terradue.OpenSearch.dll</HintPath>
+    </Reference>
+    <Reference Include="Terradue.ServiceModel.Ogc.OwsContext">
+      <HintPath>..\packages\Terradue.ServiceModel.Ogc.OwsContext.1.0.3\lib\net40\Terradue.ServiceModel.Ogc.OwsContext.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
