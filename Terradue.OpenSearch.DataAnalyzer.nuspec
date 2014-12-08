@@ -1,8 +1,8 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Terradue.OpenSearch.DataAnalyzer</id>
-    <version>1.0.3</version>
+    <version>1.0.5</version>
     <title>Terradue.OpenSearch.DataAnalyzer</title>
     <authors>Terradue</authors>
     <!--<licenseUrl>https://github.com/Terradue/DotNetOpenSearch/blob/master/LICENSE</licenseUrl>-->
@@ -12,7 +12,7 @@
     <dependencies>
       <dependency id="Terradue.OpenSearch" version="[1.7.0.1,1.8)" />
       <dependency id="Terradue.Util" version="[1.4.0,1.5)" />
-      <dependency id="GDAL" version="[1.9.2]" />
+      <dependency id="Terradue.GDAL.Native.el6.x86_64" version="[1.7.3,1.7.4)]" />
     </dependencies>
   </metadata>
   <files>
