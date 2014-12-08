@@ -31,18 +31,6 @@
     <Reference Include="Terradue.ServiceModel.Syndication">
       <HintPath>..\packages\Terradue.ServiceModel.Syndication.1.0.0.0\lib\net40\Terradue.ServiceModel.Syndication.dll</HintPath>
     </Reference>
-    <Reference Include="gdalconst_csharp">
-      <HintPath>..\packages\GDAL.1.9.2\lib\net40\gdalconst_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="gdal_csharp">
-      <HintPath>..\packages\GDAL.1.9.2\lib\net40\gdal_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="ogr_csharp">
-      <HintPath>..\packages\GDAL.1.9.2\lib\net40\ogr_csharp.dll</HintPath>
-    </Reference>
-    <Reference Include="osr_csharp">
-      <HintPath>..\packages\GDAL.1.9.2\lib\net40\osr_csharp.dll</HintPath>
-    </Reference>
     <Reference Include="Terradue.Util">
       <HintPath>..\packages\Terradue.Util.1.4.0\lib\net40\Terradue.Util.dll</HintPath>
     </Reference>
@@ -59,6 +47,21 @@
     </Reference>
     <Reference Include="Terradue.ServiceModel.Ogc.OwsContext">
       <HintPath>..\packages\Terradue.ServiceModel.Ogc.OwsContext.1.0.4\lib\net40\Terradue.ServiceModel.Ogc.OwsContext.dll</HintPath>
+    </Reference>
+    <Reference Include="Terradue.GDAL.Native">
+      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3\lib\net40\Terradue.GDAL.Native.dll</HintPath>
+    </Reference>
+    <Reference Include="gdal_csharp">
+      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3\lib\net40\gdal_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gdalconst_csharp">
+      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3\lib\net40\gdalconst_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ogr_csharp">
+      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3\lib\net40\ogr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="osr_csharp">
+      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3\lib\net40\osr_csharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -10,10 +10,16 @@ using Terradue.ServiceModel.Ogc.OwsContext;
 using OSGeo.OGR;
 using System.Collections.Generic;
 using log4net;
+using Terradue.GDAL;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
     [assembly: log4net.Config.XmlConfigurator(Watch = true)]
     public class LocalData : IAtomizable {
+
+        public static void Configure(){
+            GdalConfiguration.ConfigureGdal();
+            GdalConfiguration.ConfigureOgr();
+        }
 
         private static readonly ILog log = LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -36,6 +42,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         //------------------------------------------------------------------------------------------------------------------------
 
         public LocalData(string input, string remoteUrl) {
+
             log.Info("Creating new LocalData: Input=" + input);
             this.remoteUrl = remoteUrl;
             inputFile = input;
