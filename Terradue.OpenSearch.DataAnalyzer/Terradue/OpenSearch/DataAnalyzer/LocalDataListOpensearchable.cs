@@ -197,6 +197,10 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             sw.Close();
         }
 
+
+        public ParametersResult DescribeParameters() {
+            return OpenSearchFactory.GetDefaultParametersResult();
+        }
         #endregion
     }
 }
