@@ -103,11 +103,11 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
                 for (int i = 0; i < geometry.GetPointCount(); i++) {
                     double[] p = new double[3];
+                    geometry.GetPoint(i, p);
                     minLat = Math.Min(minLat, p[1]);
                     maxLat = Math.Max(maxLat, p[1]);
                     minLon = Math.Min(minLon, p[0]);
                     maxLon = Math.Max(maxLon, p[0]);
-                    geometry.GetPoint(i, p);
                     polygon.exterior.Item.Item.Text += p[0] + " " + p[1] + " ";
                 }
 
