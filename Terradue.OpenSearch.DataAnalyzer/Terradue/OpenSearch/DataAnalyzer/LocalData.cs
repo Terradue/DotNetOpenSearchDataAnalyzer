@@ -119,22 +119,35 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             
             List<OwcOffering> offerings = new List<OwcOffering>();
             OwcOffering offering = new OwcOffering();
+            OwcContent content = new OwcContent();
+            content.Url = remoteUrl;
+
             if (dataset != null) {
                 switch (dataset.GetDriver().ShortName) {
+                    case "GIF":
+                        content.Text = "image/gif";
+                        offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/gif";
+                        break;
                     case "GTiff":
+                        content.Text = "image/tiff";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/geotiff";
                         break;
+                    case "JPEG":
+                        content.Text = "image/jpg";
+                        offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/jpg";
+                        break;
                     case "PNG":
-                        offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/wms";
+                        content.Text = "image/png";
+                        offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/png";
                         break;
                     default:
+                        content.Text = "application/octet-stream";
                         offering.Code = null;
                         break;
                 }
             } else offering.Code = null;
 
-            OwcContent content = new OwcContent();
-            content.Url = remoteUrl;
+
 
             List<OwcContent> contents = new List<OwcContent>();
             contents.Add(content);
