@@ -108,7 +108,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                     maxLat = Math.Max(maxLat, p[1]);
                     minLon = Math.Min(minLon, p[0]);
                     maxLon = Math.Max(maxLon, p[0]);
-                    polygon.exterior.Item.Item.Text += p[0] + " " + p[1] + " ";
+                    polygon.exterior.Item.Item.Text += p[1] + " " + p[0] + " ";
                 }
 
                 georss.Item = polygon;

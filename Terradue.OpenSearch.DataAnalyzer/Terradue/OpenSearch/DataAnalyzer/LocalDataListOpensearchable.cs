@@ -102,7 +102,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             UriBuilder searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + this.WorkflowName + "/" + this.RunId + "/results/search"));
             NameValueCollection queryString = HttpUtility.ParseQueryString("?format=format");
             parameters.AllKeys.FirstOrDefault(k => {
-                queryString.Add(parameters[k], "{" + k + "?}");
+                queryString.Add(k, parameters[k]);
                 return false;
             });
 
@@ -169,15 +169,15 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             PaginatedList<LocalData> pds = new PaginatedList<LocalData>();
 
             int startIndex = 0;
-            if (parameters["startIndex"] != null) startIndex = int.Parse(parameters["startIndex"]);
+            if (!string.IsNullOrEmpty(parameters["startIndex"])) startIndex = int.Parse(parameters["startIndex"]);
 
             pds.AddRange(locals);
 
             pds.PageNo = 1;
-            if (parameters["startPage"] != null) pds.PageNo = int.Parse(parameters["startPage"]);
+            if (!string.IsNullOrEmpty(parameters["startPage"])) pds.PageNo = int.Parse(parameters["startPage"]);
 
             pds.PageSize = 20;
-            if (parameters["count"] != null) pds.PageSize = int.Parse(parameters["count"]);
+            if (!string.IsNullOrEmpty(parameters["count"])) pds.PageSize = int.Parse(parameters["count"]);
 
             pds.StartIndex = startIndex;
 
