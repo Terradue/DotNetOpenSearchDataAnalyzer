@@ -82,8 +82,9 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(new Uri(remoteUrl), "application/octet-stream", size));
 
-            if (dataset != null) {
+            if (dataset != null && size < 3 * 1000000) {
                 whereType georss = new whereType();
+
                 PolygonType polygon = new PolygonType();
                 Geometry geometry = LocalDataFunctions.OSRTransform(dataset);
                 string geometryGML = geometry.ExportToGML();
@@ -97,17 +98,28 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 polygon.exterior.Item.Item = new DirectPositionListType();
                 polygon.exterior.Item.Item.srsDimension = "2";
 
+                string box = "";
+
+                double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
                 for (int i = 0; i < geometry.GetPointCount(); i++) {
                     double[] p = new double[3];
+                    minLat = Math.Min(minLat, p[1]);
+                    maxLat = Math.Max(maxLat, p[1]);
+                    minLon = Math.Min(minLon, p[0]);
+                    maxLon = Math.Max(maxLon, p[0]);
                     geometry.GetPoint(i, p);
                     polygon.exterior.Item.Item.Text += p[0] + " " + p[1] + " ";
                 }
 
                 georss.Item = polygon;
                 entry.Where = georss;
+
+                entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon );
+            }
             
-                List<OwcOffering> offerings = new List<OwcOffering>();
-                OwcOffering offering = new OwcOffering();
+            List<OwcOffering> offerings = new List<OwcOffering>();
+            OwcOffering offering = new OwcOffering();
+            if (dataset != null) {
                 switch (dataset.GetDriver().ShortName) {
                     case "GTiff":
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/geotiff";
@@ -119,16 +131,16 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                         offering.Code = null;
                         break;
                 }
+            } else offering.Code = null;
 
-                OwcContent content = new OwcContent();
-                content.Url = remoteUrl;
+            OwcContent content = new OwcContent();
+            content.Url = remoteUrl;
 
-                List<OwcContent> contents = new List<OwcContent>();
-                contents.Add(content);
-                offering.Contents = contents.ToArray();
-                offerings.Add(offering);
-                entry.Offerings = offerings;
-            } 
+            List<OwcContent> contents = new List<OwcContent>();
+            contents.Add(content);
+            offering.Contents = contents.ToArray();
+            offerings.Add(offering);
+            entry.Offerings = offerings;
 
             return new AtomItem(entry);
         }
