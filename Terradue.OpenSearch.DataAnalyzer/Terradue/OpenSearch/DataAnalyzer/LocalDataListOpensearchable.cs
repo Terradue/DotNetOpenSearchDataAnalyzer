@@ -94,7 +94,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             osd.Description = "This Search Service performs queries in the index {0}. There are several URL templates that return the results in different formats." +
                                             "This search service is in accordance with the OGC 10-032r3 specification.";
 
-            var searchExtensions = ose.Extensions;
+            var searchExtensions = OpenSearchEngine.Extensions;
             List<OpenSearchDescriptionUrl> urls = new List<OpenSearchDescriptionUrl>();
 
             NameValueCollection parameters = GetOpenSearchParameters(this.DefaultMimeType);
