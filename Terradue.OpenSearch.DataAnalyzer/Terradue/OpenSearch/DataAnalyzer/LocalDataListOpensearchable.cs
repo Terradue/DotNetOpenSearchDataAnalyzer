@@ -168,8 +168,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             PaginatedList<LocalData> pds = new PaginatedList<LocalData>();
 
-            int startIndex = 0;
-            if (!string.IsNullOrEmpty(parameters["startIndex"])) startIndex = int.Parse(parameters["startIndex"]);
+            pds.StartIndex = 1;
+            if (!string.IsNullOrEmpty(parameters["startIndex"])) pds.StartIndex = int.Parse(parameters["startIndex"]);
 
             pds.AddRange(locals);
 
@@ -179,7 +179,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             pds.PageSize = 20;
             if (!string.IsNullOrEmpty(parameters["count"])) pds.PageSize = int.Parse(parameters["count"]);
 
-            pds.StartIndex = startIndex;
+            pds.StartIndex--;
+            pds.PageNo--;
 
             if(this.Identifier != null) feed.ElementExtensions.Add("identifier", "http://purl.org/dc/elements/1.1/", this.Identifier);
 
