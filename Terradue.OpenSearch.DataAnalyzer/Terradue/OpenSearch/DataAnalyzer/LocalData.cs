@@ -82,7 +82,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(new Uri(remoteUrl), "application/octet-stream", size));
 
-            if (dataset != null && size < 3 * 1000000) {
+            if (dataset != null) {
                 whereType georss = new whereType();
 
                 PolygonType polygon = new PolygonType();
@@ -125,23 +125,23 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             if (dataset != null) {
                 switch (dataset.GetDriver().ShortName) {
                     case "GIF":
-                        content.Text = "image/gif";
+                        content.Type = "image/gif";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/gif";
                         break;
                     case "GTiff":
-                        content.Text = "image/tiff";
+                        content.Type = "image/tiff";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/geotiff";
                         break;
                     case "JPEG":
-                        content.Text = "image/jpg";
+                        content.Type = "image/jpg";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/jpg";
                         break;
                     case "PNG":
-                        content.Text = "image/png";
+                        content.Type = "image/png";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/png";
                         break;
                     default:
-                        content.Text = "application/octet-stream";
+                        content.Type = "application/octet-stream";
                         offering.Code = null;
                         break;
                 }
