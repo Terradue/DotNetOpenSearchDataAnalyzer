@@ -87,34 +87,36 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
                 PolygonType polygon = new PolygonType();
                 Geometry geometry = LocalDataFunctions.OSRTransform(dataset);
-                string geometryGML = geometry.ExportToGML();
-                Console.WriteLine("Adding geometry : " + geometryGML);
-                polygon.exterior = new AbstractRingPropertyType();
-                //        System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(LinearRingType), "http://www.opengis.net/gml");
-                //
-                //        using (TextReader reader = new StringReader(geometryGML)) {
-                //            polygon.exterior.Item = (LinearRingType)serializer.Deserialize(reader);
-                //        }
-                polygon.exterior.Item.Item = new DirectPositionListType();
-                polygon.exterior.Item.Item.srsDimension = "2";
+                if (geometry != null) {
+                    string geometryGML = geometry.ExportToGML();
+                    Console.WriteLine("Adding geometry : " + geometryGML);
+                    polygon.exterior = new AbstractRingPropertyType();
+                    //        System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(LinearRingType), "http://www.opengis.net/gml");
+                    //
+                    //        using (TextReader reader = new StringReader(geometryGML)) {
+                    //            polygon.exterior.Item = (LinearRingType)serializer.Deserialize(reader);
+                    //        }
+                    polygon.exterior.Item.Item = new DirectPositionListType();
+                    polygon.exterior.Item.Item.srsDimension = "2";
 
-                string box = "";
+                    string box = "";
 
-                double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
-                for (int i = 0; i < geometry.GetPointCount(); i++) {
-                    double[] p = new double[3];
-                    geometry.GetPoint(i, p);
-                    minLat = Math.Min(minLat, p[1]);
-                    maxLat = Math.Max(maxLat, p[1]);
-                    minLon = Math.Min(minLon, p[0]);
-                    maxLon = Math.Max(maxLon, p[0]);
-                    polygon.exterior.Item.Item.Text += p[1] + " " + p[0] + " ";
+                    double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
+                    for (int i = 0; i < geometry.GetPointCount(); i++) {
+                        double[] p = new double[3];
+                        geometry.GetPoint(i, p);
+                        minLat = Math.Min(minLat, p[1]);
+                        maxLat = Math.Max(maxLat, p[1]);
+                        minLon = Math.Min(minLon, p[0]);
+                        maxLon = Math.Max(maxLon, p[0]);
+                        polygon.exterior.Item.Item.Text += p[1] + " " + p[0] + " ";
+                    }
+
+                    georss.Item = polygon;
+                    entry.Where = georss;
+
+                    entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon);
                 }
-
-                georss.Item = polygon;
-                entry.Where = georss;
-
-                entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon );
             }
             
             List<OwcOffering> offerings = new List<OwcOffering>();
