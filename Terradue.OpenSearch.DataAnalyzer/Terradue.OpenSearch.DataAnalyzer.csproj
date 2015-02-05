@@ -42,26 +42,26 @@
     <Reference Include="ServiceStack.Text">
       <HintPath>..\packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
-    <Reference Include="Terradue.GDAL.Native">
-      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3.2\lib\net40\Terradue.GDAL.Native.dll</HintPath>
-    </Reference>
     <Reference Include="Terradue.OpenSearch">
-      <HintPath>..\packages\Terradue.OpenSearch.1.8.2\lib\net40\Terradue.OpenSearch.dll</HintPath>
+      <HintPath>..\packages\Terradue.OpenSearch.1.8.6\lib\net40\Terradue.OpenSearch.dll</HintPath>
     </Reference>
     <Reference Include="Terradue.ServiceModel.Ogc.OwsContext">
-      <HintPath>..\packages\Terradue.ServiceModel.Ogc.OwsContext.1.0.5\lib\net40\Terradue.ServiceModel.Ogc.OwsContext.dll</HintPath>
+      <HintPath>..\packages\Terradue.ServiceModel.Ogc.OwsContext.1.0.6\lib\net40\Terradue.ServiceModel.Ogc.OwsContext.dll</HintPath>
     </Reference>
     <Reference Include="gdal_csharp">
-      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3.2\lib\net40\gdal_csharp.dll</HintPath>
+      <HintPath>..\packages\Terradue.GDAL.Native.Mono.1.7.3\lib\net40\gdal_csharp.dll</HintPath>
     </Reference>
     <Reference Include="gdalconst_csharp">
-      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3.2\lib\net40\gdalconst_csharp.dll</HintPath>
+      <HintPath>..\packages\Terradue.GDAL.Native.Mono.1.7.3\lib\net40\gdalconst_csharp.dll</HintPath>
     </Reference>
     <Reference Include="ogr_csharp">
-      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3.2\lib\net40\ogr_csharp.dll</HintPath>
+      <HintPath>..\packages\Terradue.GDAL.Native.Mono.1.7.3\lib\net40\ogr_csharp.dll</HintPath>
     </Reference>
     <Reference Include="osr_csharp">
-      <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3.2\lib\net40\osr_csharp.dll</HintPath>
+      <HintPath>..\packages\Terradue.GDAL.Native.Mono.1.7.3\lib\net40\osr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Terradue.GDAL.Native">
+      <HintPath>..\packages\Terradue.GDAL.Native.Mono.1.7.3\lib\net40\Terradue.GDAL.Native.Mono.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

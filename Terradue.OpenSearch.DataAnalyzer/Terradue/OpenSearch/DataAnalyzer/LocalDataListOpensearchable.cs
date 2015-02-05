@@ -69,7 +69,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             UriBuilder builder = new UriBuilder("http://"+System.Environment.MachineName);
             string[] queryString = Array.ConvertAll(parameters.AllKeys, key => string.Format("{0}={1}", key, parameters[key]));
             builder.Query = string.Join("&", queryString);
-//            MemoryOpenSearchRequest request = (MemoryOpenSearchRequest)MemoryOpenSearchRequest.Create(new OpenSearchUrl(builder.ToString()));
             MemoryOpenSearchRequest request = new MemoryOpenSearchRequest(new OpenSearchUrl(builder.ToString()), this.DefaultMimeType);
 
             System.IO.Stream input = request.MemoryInputStream;
