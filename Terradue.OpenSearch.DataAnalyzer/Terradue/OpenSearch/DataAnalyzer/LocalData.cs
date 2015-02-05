@@ -37,14 +37,14 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
         public Dataset dataset { get; set; }
 
-        string remoteUrl;
+        Uri remoteUri;
 
         //------------------------------------------------------------------------------------------------------------------------
 
-        public LocalData(string input, string remoteUrl) {
+        public LocalData(string input, Uri remoteUri) {
 
             log.Info("Creating new LocalData: Input=" + input);
-            this.remoteUrl = remoteUrl;
+            this.remoteUri = remoteUri;
             inputFile = input;
             try{
                 dataset = OSGeo.GDAL.Gdal.Open( input, Access.GA_ReadOnly );
@@ -80,68 +80,65 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
             entry.LastUpdatedTime = DateTimeOffset.Now;
             entry.PublishDate = DateTimeOffset.Now;
-            entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(new Uri(remoteUrl), "application/octet-stream", size));
+            entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(remoteUri, "application/octet-stream", size));
 
-            if (dataset != null && size < 3 * 1000000) {
+            if (dataset != null) {
                 whereType georss = new whereType();
 
                 PolygonType polygon = new PolygonType();
                 Geometry geometry = LocalDataFunctions.OSRTransform(dataset);
-                string geometryGML = geometry.ExportToGML();
-                Console.WriteLine("Adding geometry : " + geometryGML);
-                polygon.exterior = new AbstractRingPropertyType();
-                //        System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(LinearRingType), "http://www.opengis.net/gml");
-                //
-                //        using (TextReader reader = new StringReader(geometryGML)) {
-                //            polygon.exterior.Item = (LinearRingType)serializer.Deserialize(reader);
-                //        }
-                polygon.exterior.Item.Item = new DirectPositionListType();
-                polygon.exterior.Item.Item.srsDimension = "2";
+                if (geometry != null) {
+                    string geometryGML = geometry.ExportToGML();
+                    Console.WriteLine("Adding geometry : " + geometryGML);
+                    polygon.exterior = new AbstractRingPropertyType();
+                    polygon.exterior.Item.Item = new DirectPositionListType();
+                    polygon.exterior.Item.Item.srsDimension = "2";
 
-                string box = "";
+                    string box = "";
 
-                double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
-                for (int i = 0; i < geometry.GetPointCount(); i++) {
-                    double[] p = new double[3];
-                    geometry.GetPoint(i, p);
-                    minLat = Math.Min(minLat, p[1]);
-                    maxLat = Math.Max(maxLat, p[1]);
-                    minLon = Math.Min(minLon, p[0]);
-                    maxLon = Math.Max(maxLon, p[0]);
-                    polygon.exterior.Item.Item.Text += p[0] + " " + p[1] + " ";
+                    double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
+                    for (int i = 0; i < geometry.GetPointCount(); i++) {
+                        double[] p = new double[3];
+                        geometry.GetPoint(i, p);
+                        minLat = Math.Min(minLat, p[1]);
+                        maxLat = Math.Max(maxLat, p[1]);
+                        minLon = Math.Min(minLon, p[0]);
+                        maxLon = Math.Max(maxLon, p[0]);
+                        polygon.exterior.Item.Item.Text += p[1] + " " + p[0] + " ";
+                    }
+
+                    georss.Item = polygon;
+                    entry.Where = georss;
+
+                    entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon);
                 }
-
-                georss.Item = polygon;
-                entry.Where = georss;
-
-                entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon );
             }
             
             List<OwcOffering> offerings = new List<OwcOffering>();
             OwcOffering offering = new OwcOffering();
             OwcContent content = new OwcContent();
-            content.Url = remoteUrl;
+            content.Url = remoteUri.ToString();
 
             if (dataset != null) {
                 switch (dataset.GetDriver().ShortName) {
                     case "GIF":
-                        content.Text = "image/gif";
+                        content.Type = "image/gif";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/gif";
                         break;
                     case "GTiff":
-                        content.Text = "image/tiff";
+                        content.Type = "image/tiff";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/geotiff";
                         break;
                     case "JPEG":
-                        content.Text = "image/jpg";
+                        content.Type = "image/jpg";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/jpg";
                         break;
                     case "PNG":
-                        content.Text = "image/png";
+                        content.Type = "image/png";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/png";
                         break;
                     default:
-                        content.Text = "application/octet-stream";
+                        content.Type = "application/octet-stream";
                         offering.Code = null;
                         break;
                 }
@@ -158,7 +155,13 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             return new AtomItem(entry);
         }
 
+        public NameValueCollection GetOpenSearchParameters() {
+            return OpenSearchFactory.GetBaseOpenSearchParameter();
+        }
+
         #endregion
+
+
     }
 }
 

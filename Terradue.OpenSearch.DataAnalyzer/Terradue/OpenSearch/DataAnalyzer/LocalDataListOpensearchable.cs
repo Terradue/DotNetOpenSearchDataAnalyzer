@@ -69,7 +69,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             UriBuilder builder = new UriBuilder("http://"+System.Environment.MachineName);
             string[] queryString = Array.ConvertAll(parameters.AllKeys, key => string.Format("{0}={1}", key, parameters[key]));
             builder.Query = string.Join("&", queryString);
-//            MemoryOpenSearchRequest request = (MemoryOpenSearchRequest)MemoryOpenSearchRequest.Create(new OpenSearchUrl(builder.ToString()));
             MemoryOpenSearchRequest request = new MemoryOpenSearchRequest(new OpenSearchUrl(builder.ToString()), this.DefaultMimeType);
 
             System.IO.Stream input = request.MemoryInputStream;
@@ -102,7 +101,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             UriBuilder searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + this.WorkflowName + "/" + this.RunId + "/results/search"));
             NameValueCollection queryString = HttpUtility.ParseQueryString("?format=format");
             parameters.AllKeys.FirstOrDefault(k => {
-                queryString.Add(parameters[k], "{" + k + "?}");
+                queryString.Add(k, parameters[k]);
                 return false;
             });
 
@@ -168,18 +167,19 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             PaginatedList<LocalData> pds = new PaginatedList<LocalData>();
 
-            int startIndex = 0;
-            if (parameters["startIndex"] != null) startIndex = int.Parse(parameters["startIndex"]);
+            pds.StartIndex = 1;
+            if (!string.IsNullOrEmpty(parameters["startIndex"])) pds.StartIndex = int.Parse(parameters["startIndex"]);
 
             pds.AddRange(locals);
 
             pds.PageNo = 1;
-            if (parameters["startPage"] != null) pds.PageNo = int.Parse(parameters["startPage"]);
+            if (!string.IsNullOrEmpty(parameters["startPage"])) pds.PageNo = int.Parse(parameters["startPage"]);
 
             pds.PageSize = 20;
-            if (parameters["count"] != null) pds.PageSize = int.Parse(parameters["count"]);
+            if (!string.IsNullOrEmpty(parameters["count"])) pds.PageSize = int.Parse(parameters["count"]);
 
-            pds.StartIndex = startIndex;
+            pds.StartIndex--;
+            pds.PageNo--;
 
             if(this.Identifier != null) feed.ElementExtensions.Add("identifier", "http://purl.org/dc/elements/1.1/", this.Identifier);
 

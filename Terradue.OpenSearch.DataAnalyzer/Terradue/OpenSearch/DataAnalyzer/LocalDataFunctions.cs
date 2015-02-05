@@ -22,10 +22,12 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             dsPoints.Add(new double[]{ 0, 0, 0 });
             //Lower left
             dsPoints.Add(new double[]{ 0, ds.RasterYSize, 0 });
-            //Upper right
-            dsPoints.Add(new double[]{ ds.RasterXSize, 0, 0 });
             //Lower right
             dsPoints.Add(new double[]{ ds.RasterXSize, ds.RasterYSize, 0 });
+            //Upper right
+            dsPoints.Add(new double[]{ ds.RasterXSize, 0, 0 });
+
+
 
             string val = "";
             Geometry geometry = new Geometry(wkbGeometryType.wkbLinearRing);
@@ -36,6 +38,10 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             ds.GetGeoTransform(adfGeoTransform);
             ds.GetProjection();
+
+            Console.Out.WriteLine(adfGeoTransform[0]);
+            if (adfGeoTransform[0] == 0)
+                return null;
 
             CoordinateTransformation ct;
             try{
