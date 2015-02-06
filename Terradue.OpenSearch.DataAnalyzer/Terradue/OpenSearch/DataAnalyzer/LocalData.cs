@@ -26,13 +26,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
         public string inputFile { get; set; }
 
-        private string inputFilename {
-            get {
-                if (!inputFile.Contains("/")) return inputFile;
-                return inputFile.Substring(inputFile.LastIndexOf("/") + 1);
-            }
-        }
-
         private long size { get; set; }
 
         public Dataset dataset { get; set; }
@@ -63,17 +56,18 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
         public AtomItem ToAtomItem(NameValueCollection parameters) {
 
-            Console.WriteLine("ToAtomItem : " + this.inputFilename);
-
-            string identifier = this.inputFilename;
+            string identifier = this.inputFile;
 
             string name = identifier;
-            string description = null;
 
-            if (parameters["q"] != null) {
+            if (!string.IsNullOrEmpty(parameters["q"])) {
                 string q = parameters["q"];
                 if (!(name.Contains(q))) return null;
             }
+
+            if (!string.IsNullOrEmpty(parameters["id"]))
+                if ( identifier != parameters["id"] ) return null;
+
                 
             OwsContextAtomEntry entry = new OwsContextAtomEntry();
             entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
@@ -93,8 +87,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                     polygon.exterior = new AbstractRingPropertyType();
                     polygon.exterior.Item.Item = new DirectPositionListType();
                     polygon.exterior.Item.Item.srsDimension = "2";
-
-                    string box = "";
 
                     double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
                     for (int i = 0; i < geometry.GetPointCount(); i++) {

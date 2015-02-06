@@ -62,18 +62,14 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         #region IOpenSearchable implementation
 
         public QuerySettings GetQuerySettings(Terradue.OpenSearch.Engine.OpenSearchEngine ose) {
-            return new QuerySettings(this.DefaultMimeType, AtomOpenSearchEngineExtension.TransformAtomResponseToAtomFeed);
+            return new QuerySettings(this.DefaultMimeType, new AtomOpenSearchEngineExtension().ReadNative);
         }
 
         public Terradue.OpenSearch.Request.OpenSearchRequest Create(string mimetype, System.Collections.Specialized.NameValueCollection parameters) {
             UriBuilder builder = new UriBuilder("http://"+System.Environment.MachineName);
             string[] queryString = Array.ConvertAll(parameters.AllKeys, key => string.Format("{0}={1}", key, parameters[key]));
             builder.Query = string.Join("&", queryString);
-            MemoryOpenSearchRequest request = new MemoryOpenSearchRequest(new OpenSearchUrl(builder.ToString()), this.DefaultMimeType);
-
-            System.IO.Stream input = request.MemoryInputStream;
-
-            GenerateSyndicationFeed(input, parameters);
+            AtomOpenSearchRequest request = new AtomOpenSearchRequest(new OpenSearchUrl(builder.ToString()), GenerateSyndicationFeed);
 
             return request;
         }
@@ -124,7 +120,9 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         }
 
         public System.Collections.Specialized.NameValueCollection GetOpenSearchParameters(string mimeType) {
-            return OpenSearchFactory.GetBaseOpenSearchParameter();
+            NameValueCollection nvc = OpenSearchFactory.GetBaseOpenSearchParameter();
+            nvc.Add("id", "{geo:uid}");
+            return nvc;
         }
 
         public void ApplyResultFilters(Terradue.OpenSearch.Request.OpenSearchRequest request, ref Terradue.OpenSearch.Result.IOpenSearchResultCollection osr) {
@@ -149,7 +147,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             }
         }
 
-        private void GenerateSyndicationFeed(System.IO.Stream stream, NameValueCollection parameters) {
+        private AtomFeed GenerateSyndicationFeed(NameValueCollection parameters) {
             UriBuilder myUrl = new UriBuilder("http://"+System.Environment.MachineName);
             string[] queryString = Array.ConvertAll(parameters.AllKeys, key => String.Format("{0}={1}", key, parameters[key]));
             myUrl.Query = string.Join("&", queryString);
@@ -190,11 +188,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             feed.Items = items;
 
-            var sw = System.Xml.XmlWriter.Create(stream);
-            Atom10FeedFormatter atomFormatter = new Atom10FeedFormatter(feed.Feed);
-            atomFormatter.WriteTo(sw);
-            sw.Flush();
-            sw.Close();
+            return feed;
         }
 
 
