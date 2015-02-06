@@ -121,7 +121,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
         public System.Collections.Specialized.NameValueCollection GetOpenSearchParameters(string mimeType) {
             NameValueCollection nvc = OpenSearchFactory.GetBaseOpenSearchParameter();
-            nvc.Add("id", "{geo:uid}");
+            nvc.Add("id", "{geo:uid?}");
             return nvc;
         }
 
