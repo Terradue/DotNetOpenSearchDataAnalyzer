@@ -58,10 +58,10 @@
       <HintPath>..\packages\Terradue.GDAL.Native.el6.x86_64.1.7.3\lib\net40\osr_csharp.dll</HintPath>
     </Reference>
     <Reference Include="Terradue.OpenSearch">
-      <HintPath>..\packages\Terradue.OpenSearch.1.8.2\lib\net40\Terradue.OpenSearch.dll</HintPath>
+      <HintPath>..\packages\Terradue.OpenSearch.1.9.5\lib\net40\Terradue.OpenSearch.dll</HintPath>
     </Reference>
     <Reference Include="Terradue.ServiceModel.Ogc.OwsContext">
-      <HintPath>..\packages\Terradue.ServiceModel.Ogc.OwsContext.1.0.5\lib\net40\Terradue.ServiceModel.Ogc.OwsContext.dll</HintPath>
+      <HintPath>..\packages\Terradue.ServiceModel.Ogc.OwsContext.1.0.6\lib\net40\Terradue.ServiceModel.Ogc.OwsContext.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +69,8 @@
     <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalData.cs" />
     <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDataFunctions.cs" />
     <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDataListOpensearchable.cs" />
+    <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDirectory.cs" />
+    <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDirectoryListOpensearchable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

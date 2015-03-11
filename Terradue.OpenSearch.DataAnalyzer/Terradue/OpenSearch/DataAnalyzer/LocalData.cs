@@ -158,6 +158,10 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             return new AtomItem(entry);
         }
 
+
+        public NameValueCollection GetOpenSearchParameters() {
+            return OpenSearchFactory.GetBaseOpenSearchParameter();
+        }
         #endregion
     }
 }

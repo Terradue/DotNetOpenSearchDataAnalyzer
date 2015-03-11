@@ -14,14 +14,14 @@ using Terradue.ServiceModel.Syndication;
 using Terradue.OpenSearch.Request;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
-    public class LocalDataListOpensearchable : IOpenSearchable {
+    public class LocalDirectoryListOpensearchable : IOpenSearchable {
 
         private static OpenSearchEngine ose;
 
         /// <summary>
         /// List of local data
         /// </summary>
-        List<LocalData> locals;
+        List<LocalDirectory> locals;
 
         /// <summary>
         /// Gets the opensearch engine.
@@ -45,16 +45,9 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         /// <value>The name of the workflow.</value>
         public string WorkflowName { get; set; }
 
-        /// <summary>
-        /// Gets or sets the run identifier.
-        /// </summary>
-        /// <value>The run identifier.</value>
-        public string RunId { get; set; }
-
-        public LocalDataListOpensearchable(List<LocalData> locals, string workflowname, string runid) {
+        public LocalDirectoryListOpensearchable(List<LocalDirectory> locals, string workflowname) {
             this.locals = locals;
             this.WorkflowName = workflowname;
-            this.RunId = runid;
         }
 
 
@@ -71,12 +64,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             UriBuilder builder = new UriBuilder("http://"+System.Environment.MachineName);
             string[] queryString = Array.ConvertAll(parameters.AllKeys, key => string.Format("{0}={1}", key, parameters[key]));
             builder.Query = string.Join("&", queryString);
-//            MemoryOpenSearchRequest request = (MemoryOpenSearchRequest)MemoryOpenSearchRequest.Create(new OpenSearchUrl(builder.ToString()));
-            MemoryOpenSearchRequest request = new MemoryOpenSearchRequest(new OpenSearchUrl(builder.ToString()), this.DefaultMimeType);
-
-            System.IO.Stream input = request.MemoryInputStream;
-
-            GenerateSyndicationFeed(input, parameters);
+            AtomOpenSearchRequest request = new AtomOpenSearchRequest(new OpenSearchUrl(builder.ToString()), GenerateSyndicationFeed);
 
             return request;
         }
@@ -84,7 +72,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         public Terradue.OpenSearch.Schema.OpenSearchDescription GetOpenSearchDescription() {
             OpenSearchDescription osd = new OpenSearchDescription();
 
-            osd.ShortName = " WPS Local data Catalogue";
+            osd.ShortName = " WPS Local directory Catalogue";
             osd.Attribution = "Terradue";
             osd.Contact = "info@terradue.com";
             osd.Developer = "Terradue GeoSpatial Development Team";
@@ -101,7 +89,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             NameValueCollection parameters = GetOpenSearchParameters(this.DefaultMimeType);
 
-            UriBuilder searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + this.WorkflowName + "/" + this.RunId + "/results/search"));
+            UriBuilder searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + (string.IsNullOrEmpty(this.WorkflowName) ? "run" : this.WorkflowName) + "/search" ));
             NameValueCollection queryString = HttpUtility.ParseQueryString("?format=format");
             parameters.AllKeys.FirstOrDefault(k => {
                 queryString.Add(k, parameters[k]);
@@ -117,7 +105,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                                       "results"));
 
             }
-            searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + this.WorkflowName + "/" + this.RunId + "/results/description"));
+            searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + (string.IsNullOrEmpty(this.WorkflowName) ? "run" : this.WorkflowName) + "/description" ));
             urls.Add(new OpenSearchDescriptionUrl("application/opensearchdescription+xml", 
                                                   searchUrl.ToString(),
                                                   "self"));
@@ -127,7 +115,9 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         }
 
         public System.Collections.Specialized.NameValueCollection GetOpenSearchParameters(string mimeType) {
-            return OpenSearchFactory.GetBaseOpenSearchParameter();
+            NameValueCollection nvc = OpenSearchFactory.GetBaseOpenSearchParameter();
+            nvc.Add("id", "{geo:uid?}");
+            return nvc;
         }
 
         public void ApplyResultFilters(Terradue.OpenSearch.Request.OpenSearchRequest request, ref Terradue.OpenSearch.Result.IOpenSearchResultCollection osr) {
@@ -152,7 +142,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             }
         }
 
-        private void GenerateSyndicationFeed(System.IO.Stream stream, NameValueCollection parameters) {
+        private AtomFeed GenerateSyndicationFeed(NameValueCollection parameters) {
             UriBuilder myUrl = new UriBuilder("http://"+System.Environment.MachineName);
             string[] queryString = Array.ConvertAll(parameters.AllKeys, key => String.Format("{0}={1}", key, parameters[key]));
             myUrl.Query = string.Join("&", queryString);
@@ -168,7 +158,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             // Load all avaialable Datasets according to the context
 
-            var pds = new Terradue.OpenSearch.Request.PaginatedList<LocalData>();
+            var pds = new Terradue.OpenSearch.Request.PaginatedList<LocalDirectory>();
 
             pds.StartIndex = 1;
             if (!string.IsNullOrEmpty(parameters["startIndex"])) pds.StartIndex = int.Parse(parameters["startIndex"]);
@@ -186,18 +176,14 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             if(this.Identifier != null) feed.ElementExtensions.Add("identifier", "http://purl.org/dc/elements/1.1/", this.Identifier);
 
-            foreach (LocalData s in pds.GetCurrentPage()) {
+            foreach (LocalDirectory s in pds.GetCurrentPage()) {
                 AtomItem item = (s as IAtomizable).ToAtomItem(parameters);
                 if(item != null) items.Add(item);
             }
 
             feed.Items = items;
 
-            var sw = System.Xml.XmlWriter.Create(stream);
-            Atom10FeedFormatter atomFormatter = new Atom10FeedFormatter(feed.Feed);
-            atomFormatter.WriteTo(sw);
-            sw.Flush();
-            sw.Close();
+            return feed;
         }
 
 
