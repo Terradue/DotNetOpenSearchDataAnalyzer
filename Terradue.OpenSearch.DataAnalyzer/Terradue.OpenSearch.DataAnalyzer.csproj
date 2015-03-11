@@ -42,6 +42,9 @@
     <Reference Include="ServiceStack.Text">
       <HintPath>..\packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
+    <Reference Include="Terradue.OpenSearch">
+      <HintPath>..\packages\Terradue.OpenSearch.1.9.5\lib\net40\Terradue.OpenSearch.dll</HintPath>
+    </Reference>
     <Reference Include="Terradue.ServiceModel.Ogc.OwsContext">
       <HintPath>..\packages\Terradue.ServiceModel.Ogc.OwsContext.1.0.6\lib\net40\Terradue.ServiceModel.Ogc.OwsContext.dll</HintPath>
     </Reference>
@@ -60,15 +63,14 @@
     <Reference Include="Terradue.GDAL.Native">
       <HintPath>..\packages\Terradue.GDAL.Native.Mono.1.7.3\lib\net40\Terradue.GDAL.Native.Mono.dll</HintPath>
     </Reference>
-    <Reference Include="Terradue.OpenSearch">
-      <HintPath>..\packages\Terradue.OpenSearch.1.9.3\lib\net40\Terradue.OpenSearch.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalData.cs" />
     <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDataFunctions.cs" />
     <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDataListOpensearchable.cs" />
+    <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDirectory.cs" />
+    <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDirectoryListOpensearchable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

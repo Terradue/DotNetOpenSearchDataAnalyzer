@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Terradue.OpenSearch;
 using OSGeo.GDAL;
 using Terradue.OpenSearch.Engine;
