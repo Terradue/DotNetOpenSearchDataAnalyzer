@@ -27,6 +27,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             //Upper right
             dsPoints.Add(new double[]{ ds.RasterXSize, 0, 0 });
 
+
+
             string val = "";
             Geometry geometry = new Geometry(wkbGeometryType.wkbLinearRing);
 
@@ -36,6 +38,10 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             ds.GetGeoTransform(adfGeoTransform);
             ds.GetProjection();
+
+            Console.Out.WriteLine(adfGeoTransform[0]);
+            if (adfGeoTransform[0] == 0)
+                return null;
 
             CoordinateTransformation ct;
             try{

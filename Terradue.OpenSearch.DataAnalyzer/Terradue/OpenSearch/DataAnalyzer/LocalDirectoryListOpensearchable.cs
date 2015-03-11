@@ -54,10 +54,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
         #region IOpenSearchable implementation
 
-        public QuerySettings GetQuerySettings(OpenSearchEngine ose) {
-            IOpenSearchEngineExtension osee = ose.GetExtensionByContentTypeAbility(this.DefaultMimeType);
-            if (osee == null) return null;
-            return new QuerySettings(this.DefaultMimeType, osee.ReadNative);
+        public QuerySettings GetQuerySettings(Terradue.OpenSearch.Engine.OpenSearchEngine ose) {
+            return new QuerySettings(this.DefaultMimeType, new AtomOpenSearchEngineExtension().ReadNative);
         }
 
         public Terradue.OpenSearch.Request.OpenSearchRequest Create(string mimetype, System.Collections.Specialized.NameValueCollection parameters) {
