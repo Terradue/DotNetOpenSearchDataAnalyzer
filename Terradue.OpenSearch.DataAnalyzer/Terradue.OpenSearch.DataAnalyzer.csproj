@@ -57,11 +57,11 @@
     <Reference Include="Terradue.GDAL.Native">
       <HintPath>..\packages\Terradue.GDAL.Native.Mono.1.7.3\lib\net40\Terradue.GDAL.Native.Mono.dll</HintPath>
     </Reference>
-    <Reference Include="Terradue.OpenSearch">
-      <HintPath>..\packages\Terradue.OpenSearch.1.9.11\lib\net40\Terradue.OpenSearch.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Terradue.OpenSearch">
+      <HintPath>..\packages\Terradue.OpenSearch.1.9.13\lib\net40\Terradue.OpenSearch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
