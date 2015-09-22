@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Terradue.OpenSearch;
 using Terradue.OpenSearch.Engine;
 using Terradue.OpenSearch.Filters;
@@ -14,14 +14,14 @@ using Terradue.ServiceModel.Syndication;
 using Terradue.OpenSearch.Request;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
-    public class LocalDataListOpensearchable : IOpenSearchable {
+    public class LocalDirectoryListOpensearchable : IOpenSearchable {
 
         private static OpenSearchEngine ose;
 
         /// <summary>
         /// List of local data
         /// </summary>
-        List<LocalData> locals;
+        List<LocalDirectory> locals;
 
         /// <summary>
         /// Gets the opensearch engine.
@@ -45,16 +45,9 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         /// <value>The name of the workflow.</value>
         public string WorkflowName { get; set; }
 
-        /// <summary>
-        /// Gets or sets the run identifier.
-        /// </summary>
-        /// <value>The run identifier.</value>
-        public string RunId { get; set; }
-
-        public LocalDataListOpensearchable(List<LocalData> locals, string workflowname, string runid) {
+        public LocalDirectoryListOpensearchable(List<LocalDirectory> locals, string workflowname) {
             this.locals = locals;
             this.WorkflowName = workflowname;
-            this.RunId = runid;
         }
 
 
@@ -77,7 +70,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         public Terradue.OpenSearch.Schema.OpenSearchDescription GetOpenSearchDescription() {
             OpenSearchDescription osd = new OpenSearchDescription();
 
-            osd.ShortName = " WPS Local data Catalogue";
+            osd.ShortName = " WPS Local directory Catalogue";
             osd.Attribution = "Terradue";
             osd.Contact = "info@terradue.com";
             osd.Developer = "Terradue GeoSpatial Development Team";
@@ -87,14 +80,14 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             osd.OutputEncoding = "UTF-8";
             osd.InputEncoding = "UTF-8";
             osd.Description = "This Search Service performs queries in the index {0}. There are several URL templates that return the results in different formats. " +
-                "This search service is in accordance with the OGC 10-032r3 specification.";
+                                            "This search service is in accordance with the OGC 10-032r3 specification.";
 
             var searchExtensions = OpenSearchEngine.Extensions;
             List<OpenSearchDescriptionUrl> urls = new List<OpenSearchDescriptionUrl>();
 
             NameValueCollection parameters = GetOpenSearchParameters(this.DefaultMimeType);
 
-            UriBuilder searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + this.WorkflowName + "/" + this.RunId + "/results/search"));
+            UriBuilder searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + (string.IsNullOrEmpty(this.WorkflowName) ? "run" : this.WorkflowName) + "/search" ));
             NameValueCollection queryString = HttpUtility.ParseQueryString("?format=format");
             parameters.AllKeys.FirstOrDefault(k => {
                 queryString.Add(k, parameters[k]);
@@ -110,7 +103,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                                       "results"));
 
             }
-            searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + this.WorkflowName + "/" + this.RunId + "/results/description"));
+            searchUrl = new UriBuilder(string.Format("http://" + System.Environment.MachineName + "/sbws/wps/" + (string.IsNullOrEmpty(this.WorkflowName) ? "run" : this.WorkflowName) + "/description" ));
             urls.Add(new OpenSearchDescriptionUrl("application/opensearchdescription+xml", 
                                                   searchUrl.ToString(),
                                                   "self"));
@@ -163,7 +156,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             // Load all avaialable Datasets according to the context
 
-            var pds = new Terradue.OpenSearch.Request.PaginatedList<LocalData>();
+            var pds = new Terradue.OpenSearch.Request.PaginatedList<LocalDirectory>();
 
             pds.StartIndex = 1;
             if (!string.IsNullOrEmpty(parameters["startIndex"])) pds.StartIndex = int.Parse(parameters["startIndex"]);
@@ -181,7 +174,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             if(this.Identifier != null) feed.ElementExtensions.Add("identifier", "http://purl.org/dc/elements/1.1/", this.Identifier);
 
-            foreach (LocalData s in pds.GetCurrentPage()) {
+            foreach (LocalDirectory s in pds.GetCurrentPage()) {
                 AtomItem item = (s as IAtomizable).ToAtomItem(parameters);
                 if(item != null) items.Add(item);
             }
@@ -201,7 +194,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 return false;
             }
         }
-
         #endregion
     }
 }

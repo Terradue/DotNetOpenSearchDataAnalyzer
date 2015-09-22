@@ -36,9 +36,6 @@
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="ServiceStack.Text">
       <HintPath>..\packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
@@ -60,8 +57,11 @@
     <Reference Include="Terradue.GDAL.Native">
       <HintPath>..\packages\Terradue.GDAL.Native.Mono.1.7.3\lib\net40\Terradue.GDAL.Native.Mono.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Terradue.OpenSearch">
-      <HintPath>..\packages\Terradue.OpenSearch.1.9.3\lib\net40\Terradue.OpenSearch.dll</HintPath>
+      <HintPath>..\packages\Terradue.OpenSearch.1.9.13\lib\net40\Terradue.OpenSearch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +69,8 @@
     <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalData.cs" />
     <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDataFunctions.cs" />
     <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDataListOpensearchable.cs" />
+    <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDirectory.cs" />
+    <Compile Include="Terradue\OpenSearch\DataAnalyzer\LocalDirectoryListOpensearchable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
