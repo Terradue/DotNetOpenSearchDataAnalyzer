@@ -63,6 +63,7 @@
     <Reference Include="Terradue.OpenSearch">
       <HintPath>..\packages\Terradue.OpenSearch.1.9.13\lib\net40\Terradue.OpenSearch.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

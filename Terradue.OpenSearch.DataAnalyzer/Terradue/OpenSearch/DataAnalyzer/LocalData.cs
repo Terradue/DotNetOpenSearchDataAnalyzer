@@ -11,6 +11,7 @@ using OSGeo.OGR;
 using System.Collections.Generic;
 using log4net;
 using Terradue.GDAL;
+using System.Xml.Linq;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
     [assembly: log4net.Config.XmlConfigurator(Watch = true)]
@@ -29,6 +30,10 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         private long size { get; set; }
 
         public Dataset dataset { get; set; }
+
+        public string properties { get; set; }
+
+        public XElement xml { get; set; }
 
         Uri remoteUri;
 
@@ -72,6 +77,13 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             OwsContextAtomEntry entry = new OwsContextAtomEntry();
             entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
             entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
+
+            if(!string.IsNullOrEmpty(this.properties)) entry.Summary = new Terradue.ServiceModel.Syndication.TextSyndicationContent(this.properties);
+
+            try{
+                if (this.xml != null) entry.ElementExtensions.Add(xml.CreateReader());
+            }catch(Exception){}
+                                            
             entry.LastUpdatedTime = DateTimeOffset.Now;
             entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(remoteUri, "application/octet-stream", size));
