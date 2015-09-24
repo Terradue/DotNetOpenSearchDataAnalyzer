@@ -83,6 +83,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(remoteUri, "application/octet-stream", size));
 
+            bool geometryFromProperties = false;
+
             //read properties (from file.properties)
             if (this.properties != null) {
                 string propertiesTable = "<table>";
@@ -106,6 +108,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                 break;
                             case "geometry":
                                 entry.ElementExtensions.Add("spatial","http://purl.org/dc/terms/",kv.Value);
+                                geometryFromProperties = true;
                                 break;
                             default:
                                 break;
@@ -124,7 +127,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 } catch (Exception) {}
             }
 
-            if (dataset != null && entry.Where == null) {
+            if (dataset != null && !geometryFromProperties) {
                 whereType georss = new whereType();
 
                 PolygonType polygon = new PolygonType();
