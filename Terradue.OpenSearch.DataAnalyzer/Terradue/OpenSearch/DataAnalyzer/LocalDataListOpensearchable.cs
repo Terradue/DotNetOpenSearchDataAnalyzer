@@ -125,10 +125,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             return nvc;
         }
 
-        public void ApplyResultFilters(Terradue.OpenSearch.Request.OpenSearchRequest request, ref Terradue.OpenSearch.Result.IOpenSearchResultCollection osr) {
-
-        }
-
         public string Identifier {
             get {
                 return "localdata";
