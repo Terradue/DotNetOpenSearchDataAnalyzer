@@ -184,15 +184,13 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             return feed;
         }
 
-
-        public ParametersResult DescribeParameters() {
-            return OpenSearchFactory.GetDefaultParametersResult();
-        }
-
         public bool CanCache {
             get {
                 return false;
             }
+        }
+
+        public void ApplyResultFilters(OpenSearchRequest request, ref IOpenSearchResultCollection osr, string finalContentType) {
         }
         #endregion
     }
