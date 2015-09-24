@@ -11,9 +11,11 @@ using OSGeo.OGR;
 using System.Collections.Generic;
 using log4net;
 using Terradue.GDAL;
+using System.Xml.Linq;
+using Terradue.GeoJson.Geometry;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
-    [assembly: log4net.Config.XmlConfigurator(Watch = true)]
+    [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config",Watch = true)]
     public class LocalData : IAtomizable {
 
         public static void Configure(){
@@ -29,6 +31,10 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         private long size { get; set; }
 
         public Dataset dataset { get; set; }
+
+        public List<KeyValuePair<string,string>> properties { get; set; }
+
+        public XElement xml { get; set; }
 
         Uri remoteUri;
 
@@ -57,6 +63,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         public AtomItem ToAtomItem(NameValueCollection parameters) {
 
             string identifier = this.inputFile;
+            if (identifier.Contains("/")) identifier = identifier.Substring(identifier.LastIndexOf("/") + 1);
 
             string name = identifier;
 
@@ -67,16 +74,60 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             if (!string.IsNullOrEmpty(parameters["id"]))
                 if ( identifier != parameters["id"] ) return null;
-
                 
             OwsContextAtomEntry entry = new OwsContextAtomEntry();
             entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
             entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
+                                            
             entry.LastUpdatedTime = DateTimeOffset.Now;
             entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(remoteUri, "application/octet-stream", size));
 
-            if (dataset != null) {
+            bool geometryFromProperties = false;
+
+            //read properties (from file.properties)
+            if (this.properties != null) {
+                string propertiesTable = "<table>";
+                foreach (var kv in properties) {
+                    propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
+                    try{
+                        switch (kv.Key) {
+                            case "date":
+                                var date = new DateTimeInterval();
+                                if (kv.Value.Contains("/")) {
+                                    date.StartDate = DateTime.Parse(kv.Value.Split("/".ToCharArray())[0]);
+                                    date.EndDate = DateTime.Parse(kv.Value.Split("/".ToCharArray())[1]);
+                                } else {
+                                    date.StartDate = DateTime.Parse(kv.Value);
+                                    date.EndDate = DateTime.Parse(kv.Value);
+                                }
+                                entry.Date = date;
+                                break;
+                            case "title":
+                                entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(kv.Value);
+                                break;
+                            case "geometry":
+                                entry.ElementExtensions.Add("spatial","http://purl.org/dc/terms/",kv.Value);
+                                geometryFromProperties = true;
+                                break;
+                            default:
+                                break;
+                        }
+                    }catch(Exception e){
+                    }
+                }
+                propertiesTable += "</table>";
+                entry.Summary = new Terradue.ServiceModel.Syndication.TextSyndicationContent(propertiesTable);
+            }
+
+            //read xml (from file.xml)
+            if (this.xml != null) {
+                try {
+                    entry.ElementExtensions.Add(xml.CreateReader());
+                } catch (Exception) {}
+            }
+
+            if (dataset != null && !geometryFromProperties) {
                 whereType georss = new whereType();
 
                 PolygonType polygon = new PolygonType();
@@ -135,8 +186,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                         break;
                 }
             } else offering.Code = null;
-
-
 
             List<OwcContent> contents = new List<OwcContent>();
             contents.Add(content);

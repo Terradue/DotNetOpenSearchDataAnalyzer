@@ -7,6 +7,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Terradue.OpenSearch.DataAnalyzer</RootNamespace>
     <AssemblyName>Terradue.OpenSearch.DataAnalyzer</AssemblyName>
+    <ReleaseVersion>1.2</ReleaseVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,9 +39,6 @@
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
-    <Reference Include="ServiceStack.Text">
-      <HintPath>..\packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
-    </Reference>
     <Reference Include="Terradue.ServiceModel.Ogc.OwsContext">
       <HintPath>..\packages\Terradue.ServiceModel.Ogc.OwsContext.1.0.6\lib\net40\Terradue.ServiceModel.Ogc.OwsContext.dll</HintPath>
     </Reference>
@@ -60,8 +60,18 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Mono.Addins">
+      <HintPath>..\..\..\..\platforms\t2-sandbox-dashboard\packages\Mono.Addins.1.2\lib\net40\Mono.Addins.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\platforms\t2-sandbox-dashboard\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Terradue.GeoJson">
+      <HintPath>..\..\..\..\platforms\t2-sandbox-dashboard\packages\Terradue.GeoJson.1.5.5\lib\net40\Terradue.GeoJson.dll</HintPath>
+    </Reference>
     <Reference Include="Terradue.OpenSearch">
-      <HintPath>..\packages\Terradue.OpenSearch.1.9.13\lib\net40\Terradue.OpenSearch.dll</HintPath>
+      <HintPath>..\..\..\..\platforms\t2-sandbox-dashboard\packages\Terradue.OpenSearch.1.11.6\lib\net40\Terradue.OpenSearch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
