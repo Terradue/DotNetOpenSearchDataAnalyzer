@@ -15,7 +15,7 @@ using System.Xml.Linq;
 using Terradue.GeoJson.Geometry;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
-    [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config",Watch = true)]
+    
     public class LocalData : IAtomizable {
 
         public static void Configure(){
