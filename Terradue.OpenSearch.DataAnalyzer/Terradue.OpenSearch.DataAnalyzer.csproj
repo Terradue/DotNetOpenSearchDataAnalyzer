@@ -62,16 +62,16 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Mono.Addins">
-      <HintPath>..\..\..\..\platforms\t2-sandbox-dashboard\packages\Mono.Addins.1.2\lib\net40\Mono.Addins.dll</HintPath>
+      <HintPath>..\packages\Mono.Addins.1.2\lib\net40\Mono.Addins.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\platforms\t2-sandbox-dashboard\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Terradue.GeoJson">
-      <HintPath>..\..\..\..\platforms\t2-sandbox-dashboard\packages\Terradue.GeoJson.1.5.5\lib\net40\Terradue.GeoJson.dll</HintPath>
+      <HintPath>..\packages\Terradue.GeoJson.1.5.5\lib\net40\Terradue.GeoJson.dll</HintPath>
     </Reference>
     <Reference Include="Terradue.OpenSearch">
-      <HintPath>..\..\..\..\platforms\t2-sandbox-dashboard\packages\Terradue.OpenSearch.1.11.6\lib\net40\Terradue.OpenSearch.dll</HintPath>
+      <HintPath>..\packages\Terradue.OpenSearch.1.11.6\lib\net40\Terradue.OpenSearch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
