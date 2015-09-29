@@ -97,7 +97,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             foreach (int code in searchExtensions.Keys) {
 
                 queryString.Set("format", searchExtensions[code].Identifier);
-                searchUrl.Query = queryString.ToString();
+                string[] queryStrings = Array.ConvertAll(queryString.AllKeys, key => string.Format("{0}={1}", key, queryString[key]));
+                searchUrl.Query = string.Join("&", queryStrings);
                 urls.Add(new OpenSearchDescriptionUrl(searchExtensions[code].DiscoveryContentType, 
                                                       searchUrl.ToString(),
                                                       "results"));
