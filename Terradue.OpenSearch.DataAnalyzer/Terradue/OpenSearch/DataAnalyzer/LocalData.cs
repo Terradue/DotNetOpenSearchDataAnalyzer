@@ -36,14 +36,14 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
         public XElement xml { get; set; }
 
+        Uri descriptionUri;
         Uri remoteUri;
 
         //------------------------------------------------------------------------------------------------------------------------
 
-        public LocalData(string input, Uri remoteUri) {
+        public LocalData(string input) {
 
             log.Info("Creating new LocalData: Input=" + input);
-            this.remoteUri = remoteUri;
             inputFile = input;
             try{
                 dataset = OSGeo.GDAL.Gdal.Open( input, Access.GA_ReadOnly );
@@ -56,6 +56,14 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             size = f.Length;
             log.Info("File size = " + size);
             Console.WriteLine("File size = " + size);
+        }
+
+        public LocalData(string input, Uri remoteUri) : this(input) {
+            this.remoteUri = remoteUri;
+        }
+
+        public LocalData(string input, Uri remoteUri, Uri descriptionUri) : this(input, remoteUri) {
+            this.descriptionUri = descriptionUri;
         }
 
         #region IAtomizable implementation
@@ -74,11 +82,14 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             if (!string.IsNullOrEmpty(parameters["id"]))
                 if ( identifier != parameters["id"] ) return null;
-                
+                            
             OwsContextAtomEntry entry = new OwsContextAtomEntry();
             entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
             entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
-                                            
+
+            if (this.descriptionUri != null)
+                entry.ElementExtensions.Add("parentIdentifier", OwcNamespaces.Dc, this.descriptionUri);
+
             entry.LastUpdatedTime = DateTimeOffset.Now;
             entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(remoteUri, "application/octet-stream", size));
