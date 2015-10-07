@@ -71,7 +71,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         public AtomItem ToAtomItem(NameValueCollection parameters) {
 
             string identifier = this.inputFile;
-            if (identifier.Contains("/")) identifier = identifier.Substring(identifier.LastIndexOf("/") + 1);
+            string separator = "_results/";
+            if (identifier.Contains(separator)) identifier = identifier.Substring(identifier.LastIndexOf(separator) + separator.Length);
 
             string name = identifier;
 
