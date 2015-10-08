@@ -13,6 +13,8 @@ using log4net;
 using Terradue.GDAL;
 using System.Xml.Linq;
 using Terradue.GeoJson.Geometry;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
     
@@ -71,7 +73,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         public AtomItem ToAtomItem(NameValueCollection parameters) {
 
             string identifier = this.inputFile;
-            if (identifier.Contains("/")) identifier = identifier.Substring(identifier.LastIndexOf("/") + 1);
+            string separator = "_results/";
+            if (identifier.Contains(separator)) identifier = identifier.Substring(identifier.LastIndexOf(separator) + separator.Length);
 
             string name = identifier;
 
@@ -81,11 +84,9 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             }
 
             if (!string.IsNullOrEmpty(parameters["id"]))
-                if ( identifier != parameters["id"] ) return null;
+                if (identifier != parameters["id"]) return null;
                             
             OwsContextAtomEntry entry = new OwsContextAtomEntry();
-            entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
-            entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
 
             if (this.descriptionUri != null)
                 entry.ElementExtensions.Add("parentIdentifier", OwcNamespaces.Dc, this.descriptionUri);
@@ -100,9 +101,12 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             if (this.properties != null) {
                 string propertiesTable = "<table>";
                 foreach (var kv in properties) {
-                    propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
                     try{
                         switch (kv.Key) {
+                            case "identifier":
+                                identifier = kv.Value;
+                                propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
+                                break;
                             case "date":
                                 var date = new DateTimeInterval();
                                 if (kv.Value.Contains("/")) {
@@ -113,15 +117,49 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                     date.EndDate = DateTime.Parse(kv.Value);
                                 }
                                 entry.Date = date;
+                                propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
                                 break;
                             case "title":
                                 entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(kv.Value);
+                                propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
                                 break;
                             case "geometry":
                                 entry.ElementExtensions.Add("spatial","http://purl.org/dc/terms/",kv.Value);
                                 geometryFromProperties = true;
+                                propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
+                                break;
+                            case "quicklook_url":
+                                var file = kv.Value;
+                                if(file.StartsWith("file://")){
+                                    var filePath = file.Substring(7);//skip 'file://'
+                                    var f = new System.IO.FileInfo(filePath);
+
+                                    //if file does not exist, skip
+                                    if(!f.Exists) break;
+
+                                    //if file is > 64kb, skip
+                                    if(f.Length > 64 * 1000) break;
+
+                                    //if file < 64kb, include it in the summary table in base64 image encoded
+                                    System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                                    System.Drawing.Image image = System.Drawing.Image.FromFile(filePath);
+                                    using (MemoryStream ms = new MemoryStream()){
+                                        // Convert Image to byte[]
+                                        image.Save(ms, format);
+                                        byte[] imageBytes = ms.ToArray();
+
+                                        // Convert byte[] to Base64 String
+                                        string base64String = Convert.ToBase64String(imageBytes);
+                                        propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + base64String + "</td></tr>";
+                                    }
+                                } else {
+                                    //test it is a valid url
+                                    var uri = new UriBuilder(kv.Value);
+                                    propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
+                                }
                                 break;
                             default:
+                                propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
                                 break;
                         }
                     }catch(Exception e){
@@ -129,6 +167,9 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 }
                 propertiesTable += "</table>";
                 entry.Summary = new Terradue.ServiceModel.Syndication.TextSyndicationContent(propertiesTable);
+
+                entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
+                entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
             }
 
             //read xml (from file.xml)
