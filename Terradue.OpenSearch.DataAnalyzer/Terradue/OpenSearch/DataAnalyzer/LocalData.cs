@@ -91,6 +91,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             if (this.descriptionUri != null)
                 entry.ElementExtensions.Add("parentIdentifier", OwcNamespaces.Dc, this.descriptionUri);
 
+            entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
             entry.LastUpdatedTime = DateTimeOffset.Now;
             entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(remoteUri, "application/octet-stream", size));
@@ -170,7 +171,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             }
 
             entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
-            entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
 
             //read xml (from file.xml)
             if (this.xml != null) {
