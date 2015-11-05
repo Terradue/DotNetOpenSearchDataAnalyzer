@@ -74,7 +74,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             string identifier = this.inputFile;
             string separator = "_results/";
-            if (identifier.Contains(separator)) identifier = identifier.Substring(identifier.LastIndexOf(separator) + separator.Length);
+            if (identifier!= null && identifier.Contains(separator)) identifier = identifier.Substring(identifier.LastIndexOf(separator) + separator.Length);
 
             string name = identifier;
 
@@ -167,10 +167,10 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 }
                 propertiesTable += "</table>";
                 entry.Summary = new Terradue.ServiceModel.Syndication.TextSyndicationContent(propertiesTable);
-
-                entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
-                entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
             }
+
+            entry.ElementExtensions.Add("identifier", OwcNamespaces.Dc, identifier);
+            entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(identifier);
 
             //read xml (from file.xml)
             if (this.xml != null) {
