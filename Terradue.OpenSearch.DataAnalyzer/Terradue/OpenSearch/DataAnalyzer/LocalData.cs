@@ -156,7 +156,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                 } else {
                                     //test it is a valid url
                                     var uri = new UriBuilder(kv.Value);
-                                    propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
+                                    propertiesTable += "<tr><td></td><td><img src='" + kv.Value + "'></img></td></tr>";
                                 }
                                 break;
                             default:
