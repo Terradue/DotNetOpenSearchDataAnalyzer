@@ -185,6 +185,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             feed.Items = items;
 
+            feed.TotalResults = pds.Count;
+
             return feed;
         }
 
