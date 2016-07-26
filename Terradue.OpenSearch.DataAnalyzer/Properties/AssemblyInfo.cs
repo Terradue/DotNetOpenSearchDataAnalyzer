@@ -34,6 +34,10 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCulture ("")]
 [assembly: AssemblyVersion ("1.0.27.*")]
 [assembly: AssemblyInformationalVersion ("1.0.27")]
+[assembly: AssemblyAuthors("Enguerran Boissier")]
+[assembly: AssemblyProjectUrl("https://github.com/Terradue/DotNetOpenSearchDataAnalyzer")]
+[assembly: AssemblyLicenseUrl("https://github.com/Terradue/DotNetOpenSearchDataAnalyzer/blob/master/LICENSE")]
+
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.
 //[assembly: AssemblyDelaySign(false)]
