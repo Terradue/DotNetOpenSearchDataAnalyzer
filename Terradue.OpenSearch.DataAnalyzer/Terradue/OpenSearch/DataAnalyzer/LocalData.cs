@@ -51,13 +51,13 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 dataset = OSGeo.GDAL.Gdal.Open( input, Access.GA_ReadOnly );
             }catch(Exception e){
                 log.Error(e.Message + " -- " + e.StackTrace);
-                Console.WriteLine(e.Message + " -- " + e.StackTrace);
+                log.Debug(e.Message + " -- " + e.StackTrace);
                 dataset = null;
             }
             System.IO.FileInfo f = new System.IO.FileInfo(input);
             size = f.Length;
             log.Info("File size = " + size);
-            Console.WriteLine("File size = " + size);
+            log.Debug("File size = " + size);
         }
 
         public LocalData(string input, Uri remoteUri) : this(input) {
@@ -132,28 +132,40 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                             case "quicklook_url":
                                 var file = kv.Value;
                                 if(file.StartsWith("file://")){
+                                    log.Debug("Found quicklook url : " + kv.Value);
+
                                     var filePath = file.Substring(7);//skip 'file://'
                                     var f = new System.IO.FileInfo(filePath);
 
                                     //if file does not exist, skip
-                                    if(!f.Exists) break;
+                                    if(!f.Exists){
+                                        log.Debug("File does not exists");
+                                        break;
+                                    }
 
                                     //if file is > 64kb, skip
-                                    if(f.Length > 64 * 1000) break;
+                                    if(f.Length > 64 * 1000){
+                                        log.Debug("File is too big");
+                                        break;
+                                    }
 
-                                    //if file < 64kb, include it in the summary table in base64 image encoded
-                                    System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Jpeg;
-                                    System.Drawing.Image image = System.Drawing.Image.FromFile(filePath);
-                                    using (MemoryStream ms = new MemoryStream()){
-                                        // Convert Image to byte[]
-                                        image.Save(ms, format);
-                                        byte[] imageBytes = ms.ToArray();
+                                    try{
+                                        //if file < 64kb, include it in the summary table in base64 image encoded
+                                        System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                                        System.Drawing.Image image = System.Drawing.Image.FromFile(filePath);
+                                        using (MemoryStream ms = new MemoryStream()){
+                                            // Convert Image to byte[]
+                                            image.Save(ms, format);
 
-                                        // Convert byte[] to Base64 String
-                                        string base64String = Convert.ToBase64String(imageBytes);
-                                        propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + base64String + "</td></tr>";
+                                            // Convert byte[] to Base64 String
+                                            string base64String = Convert.ToBase64String(ms.ToArray());
+                                            propertiesTable += "<tr><td></td><td><img src='data:image/jpeg;base64," + base64String + "'></td></tr>";
+                                        }
+                                    }catch(Exception e){
+                                        log.Debug("Error : " + e.Message + " - " + e.StackTrace);
                                     }
                                 } else {
+                                    log.Debug("Found quicklook url : " + kv.Value);
                                     //test it is a valid url
                                     var uri = new UriBuilder(kv.Value);
                                     propertiesTable += "<tr><td></td><td><img src='" + kv.Value + "'></img></td></tr>";
@@ -186,7 +198,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 Geometry geometry = LocalDataFunctions.OSRTransform(dataset);
                 if (geometry != null) {
                     string geometryGML = geometry.ExportToGML();
-                    Console.WriteLine("Adding geometry : " + geometryGML);
+                    log.Debug("Adding geometry : " + geometryGML);
                     polygon.exterior = new AbstractRingPropertyType();
                     polygon.exterior.Item.Item = new DirectPositionListType();
                     polygon.exterior.Item.Item.srsDimension = "2";
