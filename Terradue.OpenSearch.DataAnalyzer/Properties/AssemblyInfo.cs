@@ -1,6 +1,3 @@
-using System.Reflection;
-using System.Runtime.CompilerServices;
-
 /*!
 
 \namespace Terradue.OpenSearch.DataAnalyzer
@@ -24,19 +21,24 @@ using System.Runtime.CompilerServices;
 
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using NuGet4Mono.Extensions;
+
 [assembly: AssemblyTitle ("Terradue.OpenSearch.DataAnalyzer")]
 [assembly: AssemblyDescription ("Terradue .Net OpenSearch DataAnalyzer Module Library")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("Terradue")]
 [assembly: AssemblyProduct ("Terradue.OpenSearch.DataAnalyzer")]
 [assembly: AssemblyCopyright ("Terradue")]
+[assembly: AssemblyAuthors("Enguerran Boissier")]
+[assembly: AssemblyProjectUrl("https://github.com/Terradue/DotNetOpenSearchDataAnalyzer")]
+[assembly: AssemblyLicenseUrl("https://github.com/Terradue/DotNetOpenSearchDataAnalyzer/blob/master/LICENSE")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 [assembly: AssemblyVersion ("1.0.27.*")]
 [assembly: AssemblyInformationalVersion ("1.0.27")]
-[assembly: AssemblyAuthors("Enguerran Boissier")]
-[assembly: AssemblyProjectUrl("https://github.com/Terradue/DotNetOpenSearchDataAnalyzer")]
-[assembly: AssemblyLicenseUrl("https://github.com/Terradue/DotNetOpenSearchDataAnalyzer/blob/master/LICENSE")]
+
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.
