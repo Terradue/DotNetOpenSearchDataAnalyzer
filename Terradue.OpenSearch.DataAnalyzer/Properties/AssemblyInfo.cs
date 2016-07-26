@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 @{
     Terradue.OpenSearch.DataAnalyzer provides with a data harvester to scan files using GDAL and to extract Geo, Time and other metadata to export them as profiled structured ATOM feed.
 
-    \xrefitem sw_version "Versions" "Software Package Version" 1.0.26
+    \xrefitem sw_version "Versions" "Software Package Version" 1.0.27
 
     \xrefitem sw_link "Links" "Software Package List" [DotNetOpenSearchDataAnalyzer](https://github.com/Terradue/DotNetOpenSearchDataAnalyzer)
 
@@ -32,8 +32,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright ("Terradue")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
-[assembly: AssemblyVersion ("1.0.26.*")]
-[assembly: AssemblyInformationalVersion ("1.0.26")]
+[assembly: AssemblyVersion ("1.0.27.*")]
+[assembly: AssemblyInformationalVersion ("1.0.27")]
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.
 //[assembly: AssemblyDelaySign(false)]
