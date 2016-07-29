@@ -36,8 +36,8 @@ using NuGet4Mono.Extensions;
 [assembly: AssemblyLicenseUrl("https://github.com/Terradue/DotNetOpenSearchDataAnalyzer/blob/master/LICENSE")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
-[assembly: AssemblyVersion ("1.0.27.*")]
-[assembly: AssemblyInformationalVersion ("1.0.27")]
+[assembly: AssemblyVersion ("1.0.28.*")]
+[assembly: AssemblyInformationalVersion ("1.0.28")]
 
 
 // The following attributes are used to specify the signing key for the assembly,
