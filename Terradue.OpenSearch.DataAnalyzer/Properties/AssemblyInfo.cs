@@ -4,7 +4,7 @@
 @{
     Terradue.OpenSearch.DataAnalyzer provides with a data harvester to scan files using GDAL and to extract Geo, Time and other metadata to export them as profiled structured ATOM feed.
 
-    \xrefitem sw_version "Versions" "Software Package Version" 1.0.27
+    \xrefitem sw_version "Versions" "Software Package Version" 1.0.29
 
     \xrefitem sw_link "Links" "Software Package List" [DotNetOpenSearchDataAnalyzer](https://github.com/Terradue/DotNetOpenSearchDataAnalyzer)
 
@@ -36,8 +36,8 @@ using NuGet4Mono.Extensions;
 [assembly: AssemblyLicenseUrl("https://github.com/Terradue/DotNetOpenSearchDataAnalyzer/blob/master/LICENSE")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
-[assembly: AssemblyVersion ("1.0.28.*")]
-[assembly: AssemblyInformationalVersion ("1.0.28")]
+[assembly: AssemblyVersion ("1.0.29.*")]
+[assembly: AssemblyInformationalVersion ("1.0.29")]
 
 
 // The following attributes are used to specify the signing key for the assembly,

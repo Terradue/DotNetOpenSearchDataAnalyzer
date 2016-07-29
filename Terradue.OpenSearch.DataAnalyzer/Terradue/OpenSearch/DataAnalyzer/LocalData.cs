@@ -129,10 +129,10 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                 geometryFromProperties = true;
                                 propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
                                 break;
-                            case "quicklook_url":
+                            case "image_url":
                                 var file = kv.Value;
                                 if(file.StartsWith("file://")){
-                                    log.Debug("Found quicklook url : " + kv.Value);
+                                    log.Debug("Found image url : " + kv.Value);
 
                                     var filePath = file.Substring(7);//skip 'file://'
                                     var f = new System.IO.FileInfo(filePath);
@@ -185,7 +185,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                         log.Debug("Error : " + e.Message + " - " + e.StackTrace);
                                     }
                                 } else {
-                                    log.Debug("Found quicklook url : " + kv.Value);
+                                    log.Debug("Found image url : " + kv.Value);
                                     //test it is a valid url
                                     var uri = new UriBuilder(kv.Value);
                                     propertiesTable += "<tr><td></td><td><img src='" + kv.Value + "'></img></td></tr>";
