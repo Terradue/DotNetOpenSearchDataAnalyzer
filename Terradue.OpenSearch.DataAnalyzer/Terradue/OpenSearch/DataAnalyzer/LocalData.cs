@@ -151,16 +151,36 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
                                     try{
                                         //if file < 64kb, include it in the summary table in base64 image encoded
-                                        System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Jpeg;
-                                        System.Drawing.Image image = System.Drawing.Image.FromFile(filePath);
-                                        using (MemoryStream ms = new MemoryStream()){
-                                            // Convert Image to byte[]
-                                            image.Save(ms, format);
-
-                                            // Convert byte[] to Base64 String
-                                            string base64String = Convert.ToBase64String(ms.ToArray());
-                                            propertiesTable += "<tr><td></td><td><img src='data:image/jpeg;base64," + base64String + "'></td></tr>";
+                                        string htmlformat;
+                                        switch(filePath.Substring(filePath.LastIndexOf(".") + 1).ToLower()){
+                                            case "jpeg":
+                                            case "jpg":
+                                                htmlformat = "image/jpeg";
+                                                break;
+                                            case "png":
+                                                htmlformat = "image/png";
+                                                break;
+                                            case "tiff":
+                                                htmlformat = "image/tiff";
+                                                break;
+                                            case "bmp":
+                                                htmlformat = "image/bmp";
+                                                break;
+                                            case "gif":
+                                                htmlformat = "image/gif";
+                                                break;
+                                            case "ico":
+                                                htmlformat = "image/x-icon";
+                                                break;
+                                            default:
+                                                htmlformat = "image/jpeg";
+                                                break;
                                         }
+
+                                        // Convert byte[] to Base64 String
+                                        string base64String = Convert.ToBase64String(File.ReadAllBytes(filePath));
+                                        propertiesTable += "<tr><td></td><td><img src='data:"+ htmlformat +";base64," + base64String + "'></td></tr>";
+
                                     }catch(Exception e){
                                         log.Debug("Error : " + e.Message + " - " + e.StackTrace);
                                     }
