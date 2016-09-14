@@ -96,7 +96,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             entry.PublishDate = DateTimeOffset.Now;
             entry.Links.Add(Terradue.ServiceModel.Syndication.SyndicationLink.CreateMediaEnclosureLink(remoteUri, "application/octet-stream", size));
 
-            bool geometryFromProperties = false;
+            Geometry geometry = null;
 
             //read properties (from file.properties)
             if (this.properties != null) {
@@ -126,7 +126,9 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                 break;
                             case "geometry":
                                 entry.ElementExtensions.Add("spatial","http://purl.org/dc/terms/",kv.Value);
-                                geometryFromProperties = true;
+                                geometry = Geometry.CreateFromWkt (kv.Value);
+                                geometry = geometry.GetBoundary ();
+                                geometry.CloseRings ();
                                 propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
                                 break;
                             case "image_url":
@@ -211,35 +213,34 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 } catch (Exception) {}
             }
 
-            if (dataset != null && !geometryFromProperties) {
-                whereType georss = new whereType();
-
-                PolygonType polygon = new PolygonType();
-                Geometry geometry = LocalDataFunctions.OSRTransform(dataset);
-                if (geometry != null) {
-                    string geometryGML = geometry.ExportToGML();
-                    log.Debug("Adding geometry : " + geometryGML);
-                    polygon.exterior = new AbstractRingPropertyType();
-                    polygon.exterior.Item.Item = new DirectPositionListType();
-                    polygon.exterior.Item.Item.srsDimension = "2";
-
-                    double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
-                    for (int i = 0; i < geometry.GetPointCount(); i++) {
-                        double[] p = new double[3];
-                        geometry.GetPoint(i, p);
-                        minLat = Math.Min(minLat, p[1]);
-                        maxLat = Math.Max(maxLat, p[1]);
-                        minLon = Math.Min(minLon, p[0]);
-                        maxLon = Math.Max(maxLon, p[0]);
-                        polygon.exterior.Item.Item.Text += p[1] + " " + p[0] + " ";
-                    }
-
-                    georss.Item = polygon;
-                    entry.Where = georss;
-
-                    entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon);
-                }
+            if (dataset != null && geometry == null) {
+                geometry = LocalDataFunctions.OSRTransform (dataset);
             }
+            if (geometry != null) {
+                whereType georss = new whereType ();
+                PolygonType polygon = new PolygonType ();
+                string geometryGML = geometry.ExportToGML();
+                log.Debug("Adding geometry : " + geometryGML);
+                polygon.exterior = new AbstractRingPropertyType();
+                polygon.exterior.Item.Item = new DirectPositionListType();
+                polygon.exterior.Item.Item.srsDimension = "2";
+
+                double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
+                for (int i = 0; i < geometry.GetPointCount(); i++) {
+                    double[] p = new double[3];
+                    geometry.GetPoint(i, p);
+                    minLat = Math.Min(minLat, p[1]);
+                    maxLat = Math.Max(maxLat, p[1]);
+                    minLon = Math.Min(minLon, p[0]);
+                    maxLon = Math.Max(maxLon, p[0]);
+                    polygon.exterior.Item.Item.Text += p[1] + " " + p[0] + " ";
+                }
+
+                georss.Item = polygon;
+                entry.Where = georss;
+
+                entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon);
+            } else Console.WriteLine ("Geometry is null");
             
             List<OwcOffering> offerings = new List<OwcOffering>();
             OwcOffering offering = new OwcOffering();
