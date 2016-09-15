@@ -3,9 +3,13 @@ using OSGeo.OGR;
 using OSGeo.OSR;
 using OSGeo.GDAL;
 using System.Collections.Generic;
+using log4net;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
     public class LocalDataFunctions {
+
+        private static readonly ILog log = LogManager.GetLogger
+            (System.Reflection.MethodBase.GetCurrentMethod ().DeclaringType);
 
         /// <summary>
         /// Transforms a Dataset in a Geometry using projections
@@ -13,6 +17,8 @@ namespace Terradue.OpenSearch.DataAnalyzer {
         /// <returns>The transform.</returns>
         /// <param name="ds">Ds.</param>
         public static Geometry OSRTransform(Dataset ds){
+
+            log.Debug ("Dataset = " + ds.RasterXSize + " - " + ds.RasterYSize);
 
             double[] adfGeoTransform = new double[6];
             double dfGeoX, dfGeoY;
@@ -27,10 +33,11 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             //Upper right
             dsPoints.Add(new double[]{ ds.RasterXSize, 0, 0 });
 
-
-
             string val = "";
             Geometry geometry = new Geometry(wkbGeometryType.wkbLinearRing);
+
+            string geometryGML = geometry.ExportToGML ();
+            log.Debug ("Geometry = " + geometryGML + " with projection = " +ds.GetProjectionRef () );
 
             SpatialReference src = new SpatialReference(ds.GetProjectionRef());
             SpatialReference dst = new SpatialReference("");
@@ -39,7 +46,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             ds.GetGeoTransform(adfGeoTransform);
             ds.GetProjection();
 
-            Console.Out.WriteLine(adfGeoTransform[0]);
+            Console.Out.WriteLine(string.Join(",",adfGeoTransform));
             if (adfGeoTransform[0] == 0)
                 return null;
 
@@ -47,6 +54,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             try{
                 ct = new CoordinateTransformation(src, dst);
             }catch(Exception e){
+                log.Debug ("Error GDAL : " + e.Message + " -- " + e.StackTrace);
                 ct = null;
             }
             foreach (double[] p in dsPoints) {
