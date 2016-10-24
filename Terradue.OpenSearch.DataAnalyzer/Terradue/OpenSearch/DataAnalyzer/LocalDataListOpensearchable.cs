@@ -65,7 +65,7 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             return new QuerySettings(this.DefaultMimeType, new AtomOpenSearchEngineExtension().ReadNative);
         }
 
-        public Terradue.OpenSearch.Request.OpenSearchRequest Create(string mimetype, System.Collections.Specialized.NameValueCollection parameters) {
+        public Terradue.OpenSearch.Request.OpenSearchRequest Create(QuerySettings querySettings, System.Collections.Specialized.NameValueCollection parameters) {
             UriBuilder builder = new UriBuilder("http://"+System.Environment.MachineName);
             string[] queryString = Array.ConvertAll(parameters.AllKeys, key => string.Format("{0}={1}", key, parameters[key]));
             builder.Query = string.Join("&", queryString);
@@ -172,9 +172,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
 
             pds.PageSize = 20;
             if (!string.IsNullOrEmpty(parameters["count"])) pds.PageSize = int.Parse(parameters["count"]);
-
-            pds.StartIndex--;
-            pds.PageNo--;
 
             if(this.Identifier != null) feed.ElementExtensions.Add("identifier", "http://purl.org/dc/elements/1.1/", this.Identifier);
 
