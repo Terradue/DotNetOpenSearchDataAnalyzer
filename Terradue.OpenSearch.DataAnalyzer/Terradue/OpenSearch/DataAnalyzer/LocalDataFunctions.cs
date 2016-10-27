@@ -84,7 +84,7 @@ namespace Terradue.OpenSearch.DataAnalyzer
         }
 
 
-        public static Envelope GetRasterExtent(Dataset ds)
+        public static Envelope GetBaseRasterExtent(Dataset ds)
         {
 
             if (ds.RasterCount > 0)
@@ -95,8 +95,8 @@ namespace Terradue.OpenSearch.DataAnalyzer
 
                 extent.MinX = geoTransform[0];
                 extent.MinY = geoTransform[3];
-                extent.MaxX = geoTransform[0] + (ds.RasterXSize * geoTransform[1]);
-                extent.MaxY = geoTransform[3] + (ds.RasterXSize * geoTransform[5]);
+                extent.MaxX = geoTransform[0] + (ds.RasterXSize * geoTransform[1]) + (geoTransform[2] * ds.RasterYSize);
+                extent.MaxY = geoTransform[3] + (ds.RasterYSize * geoTransform[5]) + (geoTransform[4] * ds.RasterXSize); ;
 
                 return extent;
             }
@@ -120,7 +120,7 @@ namespace Terradue.OpenSearch.DataAnalyzer
             if (ds.RasterCount == 0)
                 return null;
 
-            extent = GetRasterExtent(ds);
+            extent = GetBaseRasterExtent(ds);
             if (string.IsNullOrEmpty(ds.GetProjection()))
             {
                 srcSRS = new SpatialReference("");
@@ -131,7 +131,12 @@ namespace Terradue.OpenSearch.DataAnalyzer
             dstSRS.ImportFromProj4(proj4);
 
             if (dstSRS.IsSame(srcSRS) == 1)
+            {
+                log.Debug("same projection");
                 return extent;
+            }
+
+            log.DebugFormat("Reprojecting from {0} to {1}", srcSRS.__str__(), dstSRS.__str__());
 
             CoordinateTransformation ct;
 
@@ -168,7 +173,7 @@ namespace Terradue.OpenSearch.DataAnalyzer
 
             if (dataset1.RasterXSize != dataset2.RasterXSize)
                 return false;
-            
+
             if (dataset1.RasterYSize != dataset2.RasterYSize)
                 return false;
 
