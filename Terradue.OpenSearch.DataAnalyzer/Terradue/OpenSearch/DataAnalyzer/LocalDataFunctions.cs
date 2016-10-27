@@ -121,10 +121,18 @@ namespace Terradue.OpenSearch.DataAnalyzer
                 return null;
 
             extent = GetBaseRasterExtent(ds);
+
+
+
             if (string.IsNullOrEmpty(ds.GetProjection()))
             {
                 srcSRS = new SpatialReference("");
                 srcSRS.ImportFromProj4(proj4);
+            }
+
+            if (srcSRS.__str__().Contains("AUTHORITY[\"EPSG\",\"3857\"]"))
+            {
+                srcSRS.ImportFromProj4("+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
             }
 
             SpatialReference dstSRS = new SpatialReference("");
