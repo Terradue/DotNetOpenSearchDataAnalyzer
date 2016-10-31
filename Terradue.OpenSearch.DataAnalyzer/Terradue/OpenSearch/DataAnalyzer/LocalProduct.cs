@@ -6,7 +6,6 @@ using Terradue.OpenSearch.Engine.Extensions;
 using System.Collections.Specialized;
 using Terradue.OpenSearch.Filters;
 using Terradue.OpenSearch.Result;
-using Terradue.ServiceModel.Ogc.OwsContext;
 using OSGeo.OGR;
 using System.Collections.Generic;
 using log4net;
@@ -23,6 +22,7 @@ using Terradue.GeoJson.GeoRss;
 using System.Security.Cryptography;
 using System.Text;
 using System.Collections.ObjectModel;
+using Terradue.ServiceModel.Ogc.Owc.AtomEncoding;
 
 namespace Terradue.OpenSearch.DataAnalyzer
 {
@@ -434,7 +434,7 @@ namespace Terradue.OpenSearch.DataAnalyzer
                 OwcOffering offering = new OwcOffering();
 
                 OwcContent content = new OwcContent();
-                content.Url = product.ProductRemoteUrl.ToString();
+                content.Url = product.ProductRemoteUrl;
 
                 if (product.Dataset.RasterCount > 0)
                 {
