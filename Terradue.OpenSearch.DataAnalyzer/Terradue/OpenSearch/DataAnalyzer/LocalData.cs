@@ -6,7 +6,6 @@ using Terradue.OpenSearch.Engine.Extensions;
 using System.Collections.Specialized;
 using Terradue.OpenSearch.Filters;
 using Terradue.OpenSearch.Result;
-using Terradue.ServiceModel.Ogc.OwsContext;
 using OSGeo.OGR;
 using System.Collections.Generic;
 using log4net;
@@ -15,6 +14,9 @@ using System.Xml.Linq;
 using Terradue.GeoJson.Geometry;
 using System.Drawing.Imaging;
 using System.IO;
+using Terradue.ServiceModel.Ogc.Owc.AtomEncoding;
+using Terradue.ServiceModel.Ogc.Gml311;
+using Terradue.GeoJson.GeoRss;
 
 namespace Terradue.OpenSearch.DataAnalyzer {
     
@@ -220,14 +222,6 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                 geometry = LocalDataFunctions.OSRTransform (dataset);
             }
             if (geometry != null) {
-                whereType georss = new whereType ();
-                PolygonType polygon = new PolygonType ();
-                log.Debug ("Geometry not null");
-                string geometryGML = geometry.ExportToGML();
-                log.Debug("Adding geometry : " + geometryGML);
-                polygon.exterior = new AbstractRingPropertyType();
-                polygon.exterior.Item.Item = new DirectPositionListType();
-                polygon.exterior.Item.Item.srsDimension = "2";
 
                 double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
                 log.Debug ("found " + geometry.GetPointCount () + " points");
@@ -239,21 +233,20 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                     maxLat = Math.Max(maxLat, p[1]);
                     minLon = Math.Min(minLon, p[0]);
                     maxLon = Math.Max(maxLon, p[0]);
-                    polygon.exterior.Item.Item.Text += p[1] + " " + p[0] + " ";
                 }
 
-                georss.Item = polygon;
-                entry.Where = georss;
 
                 entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon);
             } else log.Debug ("Geometry is null");
             
             List<OwcOffering> offerings = new List<OwcOffering>();
             OwcOffering offering = new OwcOffering();
-            OwcContent content = new OwcContent();
-            content.Url = remoteUri.ToString();
+
 
             if (dataset != null) {
+                OwcContent content = new OwcContent();
+                if (remoteUri != null)
+                    content.Url = remoteUri;
                 switch (dataset.GetDriver().ShortName) {
                     case "GIF":
                         content.Type = "image/gif";
@@ -271,16 +264,14 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                         content.Type = "image/png";
                         offering.Code = "http://www.opengis.net/spec/owc-atom/1.0/req/png";
                         break;
-                    default:
-                        content.Type = "application/octet-stream";
-                        offering.Code = null;
-                        break;
                 }
-            } else offering.Code = null;
+                List<OwcContent> contents = new List<OwcContent>();
+                contents.Add(content);
+                offering.Contents = contents.ToArray();
+            } 
 
-            List<OwcContent> contents = new List<OwcContent>();
-            contents.Add(content);
-            offering.Contents = contents.ToArray();
+
+
             offerings.Add(offering);
             entry.Offerings = offerings;
 
