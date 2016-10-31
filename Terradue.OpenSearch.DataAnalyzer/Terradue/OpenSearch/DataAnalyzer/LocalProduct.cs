@@ -159,6 +159,7 @@ namespace Terradue.OpenSearch.DataAnalyzer
 
             if (propertiesProductFile.Exists)
             {
+                properties = new JavaProperties();
                 log.Info("Reading properties for " + ProductFile.FullName);
                 using (var stream = propertiesProductFile.OpenRead())
                 {
@@ -530,6 +531,7 @@ namespace Terradue.OpenSearch.DataAnalyzer
             entry.Title = new Terradue.ServiceModel.Syndication.TextSyndicationContent(GetProductTitle());
             entry.LastUpdatedTime = ProductFile.LastWriteTimeUtc;
             entry.PublishDate = ProductFile.CreationTimeUtc;
+            entry.Summary = new ServiceModel.Syndication.TextSyndicationContent(GetHtmlSummary(), ServiceModel.Syndication.TextSyndicationContentKind.Html);
 
             AddEnclosures(entry);
 
