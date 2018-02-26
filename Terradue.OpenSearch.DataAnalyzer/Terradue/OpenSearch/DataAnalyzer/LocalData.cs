@@ -133,6 +133,18 @@ namespace Terradue.OpenSearch.DataAnalyzer {
                                 geometry = Geometry.CreateFromWkt (kv.Value);
                                 geometry = geometry.GetBoundary ();
                                 geometry.CloseRings ();
+								double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
+								log.Debug("found " + geometry.GetPointCount() + " points");
+								for (int i = 0; i < geometry.GetPointCount(); i++){
+									double[] p = new double[3];
+									geometry.GetPoint(i, p);
+									log.Debug("p[0] = " + p[0] + " ; p[1] = " + p[1]);
+									minLat = Math.Min(minLat, p[1]);
+									maxLat = Math.Max(maxLat, p[1]);
+									minLon = Math.Min(minLon, p[0]);
+									maxLon = Math.Max(maxLon, p[0]);
+								}
+								entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon);
                                 propertiesTable += "<tr><td>" + kv.Key + "</td><td>" + kv.Value + "</td></tr>";
                                 break;
                             case "image_url":
@@ -218,25 +230,15 @@ namespace Terradue.OpenSearch.DataAnalyzer {
             }
 
             if (dataset != null && geometry == null) {
-                log.Debug ("About geometry");
-                geometry = LocalDataFunctions.OSRTransform (dataset);
-            }
-            if (geometry != null) {
+				var box = LocalDataFunctions.GetRasterExtent(dataset);
 
-                double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
-                log.Debug ("found " + geometry.GetPointCount () + " points");
-                for (int i = 0; i < geometry.GetPointCount(); i++) {
-                    double[] p = new double[3];
-                    geometry.GetPoint(i, p);
-                    log.Debug ("p[0] = " + p [0] + " ; p[1] = " + p [1]);
-                    minLat = Math.Min(minLat, p[1]);
-                    maxLat = Math.Max(maxLat, p[1]);
-                    minLon = Math.Min(minLon, p[0]);
-                    maxLon = Math.Max(maxLon, p[0]);
-                }
-
-
-                entry.ElementExtensions.Add("box", OwcNamespaces.GeoRss, minLat + " " + minLon + " " + maxLat + " " + maxLon);
+				if (box != null)
+				{
+					log.Debug("extent found!");
+					entry.ElementExtensions.Add("box", "http://www.georss.org/georss", string.Format("{0} {1} {2} {3}", box.MinY, box.MinX, box.MaxY, box.MaxX));
+				}
+				else
+					log.Debug("extent is null");
             } else log.Debug ("Geometry is null");
             
             List<OwcOffering> offerings = new List<OwcOffering>();
