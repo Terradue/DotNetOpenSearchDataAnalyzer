@@ -220,7 +220,7 @@ namespace Terradue.OpenSearch.DataAnalyzer
         {
             get
             {
-                return false;
+                return true;
             }
         }
 

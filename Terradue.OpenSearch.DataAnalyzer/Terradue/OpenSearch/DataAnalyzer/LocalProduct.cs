@@ -472,8 +472,10 @@ namespace Terradue.OpenSearch.DataAnalyzer
         }
 
 
+
         private string ComputeSha1Sum()
         {
+            if(ProductFile.Length > 1024*1024*1024) return null;
             using (FileStream fs = ProductFile.OpenRead())
             using (BufferedStream bs = new BufferedStream(fs))
             {
@@ -509,7 +511,9 @@ namespace Terradue.OpenSearch.DataAnalyzer
 
             OwsContextAtomEntry entry = new OwsContextAtomEntry();
 
-            entry.ElementExtensions.Add("sha1", "http://www.terradue.com", ComputeSha1Sum());
+
+            var sha1 = ComputeSha1Sum();
+            if(sha1 != null) entry.ElementExtensions.Add("sha1", "http://www.terradue.com", sha1);
             entry.ElementExtensions.Add("relativeFilename", "http://www.terradue.com", relativeFileName);
 
             if (ReplicationInformationOnly)
