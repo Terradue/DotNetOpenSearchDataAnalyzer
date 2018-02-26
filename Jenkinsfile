@@ -24,7 +24,7 @@ pipeline {
       steps {
         parallel(
           "Package": {
-            sh "nuget4mono -g origin/${env.BRANCH_NAME} -p Terradue.OpenSearch.DataAnalyzer/packages.config Terradue.OpenSearch.DataAnalyzer/bin/Terradue.OpenSearch.DataAnalyzer.dll
+            sh "nuget4mono -g origin/${env.BRANCH_NAME} -p Terradue.OpenSearch.DataAnalyzer/packages.config Terradue.OpenSearch.DataAnalyzer/bin/Terradue.OpenSearch.DataAnalyzer.dll"
             sh 'cat *.nuspec'
             sh 'nuget pack -OutputDirectory build'
             sh "echo ${params.NUGET_PUBLISH}"           
