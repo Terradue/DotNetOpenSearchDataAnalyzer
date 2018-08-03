@@ -236,6 +236,30 @@ namespace Terradue.OpenSearch.DataAnalyzer
             return null;
         }
 
+        private string GetProductGeometryBox() {
+            if (this.properties != null && !string.IsNullOrEmpty(properties["geometry"])) {
+                try {
+                    var wkt = properties["geometry"];
+                    var geometry = Geometry.CreateFromWkt(wkt);
+                    geometry = geometry.GetBoundary();
+                    geometry.CloseRings();
+                    double minLat = 1000, minLon = 1000, maxLat = -1000, maxLon = -1000;
+                    log.Debug("found " + geometry.GetPointCount() + " points");
+                    for (int i = 0; i < geometry.GetPointCount(); i++) {
+                        double[] p = new double[3];
+                        geometry.GetPoint(i, p);
+                        log.Debug("p[0] = " + p[0] + " ; p[1] = " + p[1]);
+                        minLat = Math.Min(minLat, p[1]);
+                        maxLat = Math.Max(maxLat, p[1]);
+                        minLon = Math.Min(minLon, p[0]);
+                        maxLon = Math.Max(maxLon, p[0]);
+                    }
+                    return string.Format("{0} {1} {2} {3}", minLat, minLon, maxLat, maxLon);
+                } catch (Exception) { }
+            }
+            return null;
+        }
+
         private KeyValuePair<string, string> GetProductImage()
         {
             if (this.properties != null && !string.IsNullOrEmpty(properties["image_url"]))
@@ -554,31 +578,27 @@ namespace Terradue.OpenSearch.DataAnalyzer
                 catch (Exception) { }
             }
 
-            if (Dataset != null && Dataset.RasterCount > 0)
-            {
-
-                var box = LocalDataFunctions.GetRasterExtent(Dataset);
-
-                if (box != null)
-                {
-                    log.Debug("extent found!");
-                    entry.ElementExtensions.Add("box", "http://www.georss.org/georss", string.Format("{0} {1} {2} {3}", box.MinY, box.MinX, box.MaxY, box.MaxX));
-                }
-                else
-                    log.Debug("extent is null");
-
-            }
-
-
-
             var geometry = GetProductGeometry();
 
-            if (geometry != null)
-            {
-
+            if (geometry != null) {
                 entry.ElementExtensions.Add(geometry.ToGeoRss().CreateReader());
+                var box = GetProductGeometryBox();
+                entry.ElementExtensions.Add("box", "http://www.georss.org/georss", box);
+            } else {
+
+                if (Dataset != null && Dataset.RasterCount > 0) {
+                    var box = LocalDataFunctions.GetRasterExtent(Dataset);
+
+                    if (box != null) {
+                        log.Debug("extent found!");
+                        entry.ElementExtensions.Add("box", "http://www.georss.org/georss", string.Format("{0} {1} {2} {3}", box.MinY, box.MinX, box.MaxY, box.MaxX));
+                    } else
+                        log.Debug("extent is null");
+                }
 
             }
+
+
 
             var offerings = GetProductOfferings();
 
